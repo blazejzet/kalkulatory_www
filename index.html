@@ -6,16 +6,24 @@
 <title>Kalkulatory PL — 271 kalkulatorów na polskich przepisach 2026</title>
 <meta name="description" content="271 kalkulatorów liczących według polskich przepisów i stawek 2026: wynagrodzenia, podatki, kredyty, nieruchomości, delegacje. Wszystko liczy się na Twoim urządzeniu — bez konta, bez śledzenia, offline.">
 <meta name="color-scheme" content="light dark">
-<link rel="canonical" href="https://kalkulatory.example.pl/">
+<link rel="canonical" href="https://kalkulatory-www.vercel.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Kalkulatory PL — 271 kalkulatorów na polskich przepisach">
 <meta property="og:description" content="Wynagrodzenia, podatki, kredyty, delegacje i codzienne liczenie. Działa offline, bez konta i bez wysyłania danych.">
-<meta property="og:image" content="https://kalkulatory.example.pl/obrazy/start-jasny.jpg">
+<meta property="og:image" content="https://kalkulatory-www.vercel.com/obrazy/start-jasny.jpg">
 <meta property="og:locale" content="pl_PL">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2ZKYKW07H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2ZKYKW07H');
+</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23161F2B'/><text x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'>%C2%B1</text></svg>">
 <style>
 /* Te same zmienne co w aplikacji (assets/styles.css) — strona i kalkulatory
@@ -610,8 +618,10 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
           </div>
           <div class="fakt">
             <div>
-              <div class="fakt-t">Nie ma analityki ani skryptów śledzących</div>
-              <p class="fakt-o">Żadnego Google Analytics, pikseli ani zewnętrznych bibliotek.</p>
+              <div class="fakt-t">Aplikacja bez skryptów śledzących</div>
+              <p class="fakt-o">W samych kalkulatorach nie ma analityki, pikseli ani zewnętrznych
+                 bibliotek. Ta strona zapowiadająca liczy odwiedziny przez Google Analytics —
+                 szczegóły niżej.</p>
             </div>
           </div>
           <div class="fakt">
@@ -622,7 +632,7 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
           </div>
           <div class="fakt">
             <div>
-              <div class="fakt-t">Jedyne zapytanie sieciowe: kurs waluty</div>
+              <div class="fakt-t">W kalkulatorach jedyne zapytanie to kurs waluty</div>
               <p class="fakt-o">Do <code>api.nbp.pl</code>, wyłącznie po kliknięciu przycisku
                  w edytorze delegacji. Wysyłany jest kod waluty i data — nic więcej.</p>
             </div>
@@ -635,9 +645,11 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
             </div>
           </div>
           <p class="zastrzezenie">
-            Dla porządku: ta strona i aplikacja webowa pobierają kroje pisma z Google Fonts,
-            co oznacza zapytanie do serwerów Google przy pierwszym wczytaniu. Przy braku sieci
-            używane są kroje systemowe, a same obliczenia i tak dzieją się wyłącznie u Ciebie.
+            Dla porządku, bez drobnego druku: <b>ta strona</b> używa Google Analytics, żeby
+            policzyć odwiedziny i sprawdzić, skąd trafiają — zapisuje w tym celu ciasteczka
+            i przekazuje Google dane o wizycie. Strona i aplikacja webowa pobierają też kroje
+            pisma z Google Fonts. <b>Aplikacja z kalkulatorami nie ma żadnego z tych skryptów</b>,
+            a wpisywane w niej kwoty nie opuszczają urządzenia niezależnie od powyższego.
           </p>
         </div>
       </div>
