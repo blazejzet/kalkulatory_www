@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="pl" data-motyw="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kalkulatory PL — 271 kalkulatorów na polskich przepisach 2026</title>
+<meta name="description" content="271 kalkulatorów liczących według polskich przepisów i stawek 2026: wynagrodzenia, podatki, kredyty, nieruchomości, delegacje. Wszystko liczy się na Twoim urządzeniu — bez konta, bez śledzenia, offline.">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="https://kalkulatory.example.pl/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kalkulatory PL — 271 kalkulatorów na polskich przepisach">
+<meta property="og:description" content="Wynagrodzenia, podatki, kredyty, delegacje i codzienne liczenie. Działa offline, bez konta i bez wysyłania danych.">
+<meta property="og:image" content="https://kalkulatory.example.pl/obrazy/start-jasny.jpg">
+<meta property="og:locale" content="pl_PL">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23161F2B'/><text x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'>%C2%B1</text></svg>">
+<style>
+/* Te same zmienne co w aplikacji (assets/styles.css) — strona i kalkulatory
+   mają wyglądać na jedno. */
+:root{
+  --atrament:#161F2B; --atrament-70:#5A6472; --atrament-45:#8C95A2; --atrament-25:#B9C0C9;
+  --tlo:#EEF1F4; --tlo-2:#E4E8ED; --karta:#FFFFFF; --kreska:#D5DBE2; --kreska-mocna:#BFC7D1;
+  --akcent:#2F5D82; --akcent-tlo:#E8EFF5;
+  --dobry:#33562D; --dobry-tlo:#EDF3EB;
+  --uwaga:#8A6321; --uwaga-tlo:#FBF3E4;
+  --r:5px; --r-duzy:8px;
+  --cien:0 1px 2px rgba(22,31,43,.05), 0 2px 8px rgba(22,31,43,.05);
+  --cien-duzy:0 2px 6px rgba(22,31,43,.06), 0 12px 40px rgba(22,31,43,.10);
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-motyw="jasny"]){
+    --atrament:#E7EAEF; --atrament-70:#A2AAB7; --atrament-45:#7B8492; --atrament-25:#4C5563;
+    --tlo:#12151A; --tlo-2:#1A1E25; --karta:#1B1F26; --kreska:#2C323C; --kreska-mocna:#3A414D;
+    --akcent:#8AB4D8; --akcent-tlo:#1C2833;
+    --dobry:#8FC084; --dobry-tlo:#1A2418;
+    --uwaga:#D9B168; --uwaga-tlo:#2A2317;
+    --cien:0 1px 2px rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.25);
+    --cien-duzy:0 2px 6px rgba(0,0,0,.35), 0 12px 40px rgba(0,0,0,.45);
+  }
+}
+:root[data-motyw="ciemny"]{
+  --atrament:#E7EAEF; --atrament-70:#A2AAB7; --atrament-45:#7B8492; --atrament-25:#4C5563;
+  --tlo:#12151A; --tlo-2:#1A1E25; --karta:#1B1F26; --kreska:#2C323C; --kreska-mocna:#3A414D;
+  --akcent:#8AB4D8; --akcent-tlo:#1C2833;
+  --dobry:#8FC084; --dobry-tlo:#1A2418;
+  --uwaga:#D9B168; --uwaga-tlo:#2A2317;
+  --cien:0 1px 2px rgba(0,0,0,.3), 0 2px 10px rgba(0,0,0,.25);
+  --cien-duzy:0 2px 6px rgba(0,0,0,.35), 0 12px 40px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{
+  margin:0; background:var(--tlo); color:var(--atrament);
+  font-family:var(--sans); font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%; height:auto; display:block}
+a{color:inherit; text-decoration:none}
+h1,h2,h3,h4{font-family:var(--serif); font-weight:600; letter-spacing:-.015em; margin:0; line-height:1.15}
+:focus-visible{outline:2px solid var(--akcent); outline-offset:3px; border-radius:3px}
+.srodek{width:100%; max-width:1120px; margin:0 auto; padding:0 24px}
+
+/* ---------- Nagłówek ---------- */
+.gora{
+  position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--tlo) 88%, transparent);
+  backdrop-filter:saturate(1.6) blur(10px); border-bottom:1px solid var(--kreska);
+}
+.gora-w{display:flex; align-items:center; gap:20px; height:62px}
+.logo{font-family:var(--serif); font-size:21px; display:flex; align-items:baseline; gap:7px; font-weight:600}
+.logo-znak{
+  font-family:var(--sans); font-size:10px; font-weight:600; letter-spacing:.06em;
+  background:var(--atrament); color:var(--tlo); border-radius:3px; padding:2px 5px;
+  position:relative; top:-2px;
+}
+.nawigacja{display:flex; gap:22px; margin-left:auto; font-size:14.5px; color:var(--atrament-70)}
+.nawigacja a:hover{color:var(--atrament)}
+.gora-akcje{display:flex; gap:10px; align-items:center}
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:9px 16px; font-size:14px; font-weight:500; font-family:var(--sans);
+  border:1px solid var(--kreska-mocna); background:var(--karta); color:inherit;
+  border-radius:var(--r); cursor:pointer; white-space:nowrap;
+  transition:background .12s, border-color .12s, transform .12s;
+}
+.btn:hover{background:var(--tlo-2)}
+.btn-mocny{background:var(--atrament); color:var(--tlo); border-color:var(--atrament)}
+.btn-mocny:hover{background:var(--atrament-70); border-color:var(--atrament-70)}
+.btn-duzy{padding:13px 24px; font-size:15.5px}
+.btn-motyw{padding:8px 10px; line-height:1; font-size:15px}
+
+/* ---------- Sekcje ---------- */
+section{padding:84px 0; border-bottom:1px solid var(--kreska)}
+/* Przyklejony pasek zasłoniłby nagłówek sekcji, do której prowadzi kotwica. */
+section[id],main[id]{scroll-margin-top:78px}
+.oko{font-size:12.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--atrament-45); margin-bottom:14px}
+.sekcja-tytul{font-size:clamp(28px,3.6vw,40px); margin-bottom:14px}
+.sekcja-lead{font-size:17px; color:var(--atrament-70); max-width:62ch; margin:0 0 40px}
+
+/* ---------- Hero ---------- */
+.hero{padding:76px 0 64px; border-bottom:none}
+.hero h1{font-size:clamp(38px,6vw,66px); letter-spacing:-.03em; margin-bottom:22px; max-width:16ch}
+.hero-lead{font-size:clamp(17px,2vw,20px); color:var(--atrament-70); max-width:58ch; margin:0 0 32px}
+.hero-akcje{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:18px}
+.hero-drobne{font-size:13.5px; color:var(--atrament-45)}
+
+.liczby{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; margin:56px 0 0;
+  background:var(--kreska); border:1px solid var(--kreska); border-radius:var(--r-duzy); overflow:hidden}
+.liczba{background:var(--tlo); padding:22px 20px}
+.liczba-v{font-family:var(--serif); font-size:34px; font-weight:600; line-height:1; letter-spacing:-.02em}
+.liczba-l{font-size:13px; color:var(--atrament-70); margin-top:8px}
+
+/* ---------- Zrzut ekranu ---------- */
+.zrzut-ramka{
+  margin-top:56px; border:1px solid var(--kreska); border-radius:var(--r-duzy);
+  overflow:hidden; box-shadow:var(--cien-duzy); background:var(--karta);
+}
+.zrzut-pasek{
+  display:flex; align-items:center; gap:7px; padding:10px 14px;
+  border-bottom:1px solid var(--kreska); background:var(--tlo-2);
+}
+.kropka{width:10px; height:10px; border-radius:50%; background:var(--kreska-mocna)}
+.zrzut-adres{
+  margin-left:10px; font-size:12px; color:var(--atrament-45); font-family:var(--sans);
+  background:var(--karta); border:1px solid var(--kreska); border-radius:3px; padding:3px 10px;
+}
+.zrzut img{width:100%; height:auto}
+.zrzut-ciemny{display:none}
+@media (prefers-color-scheme: dark){
+  :root:not([data-motyw="jasny"]) .zrzut-jasny{display:none}
+  :root:not([data-motyw="jasny"]) .zrzut-ciemny{display:block}
+}
+:root[data-motyw="ciemny"] .zrzut-jasny{display:none}
+:root[data-motyw="ciemny"] .zrzut-ciemny{display:block}
+:root[data-motyw="jasny"] .zrzut-jasny{display:block}
+:root[data-motyw="jasny"] .zrzut-ciemny{display:none}
+
+/* ---------- Karty wartości ---------- */
+.karty{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px}
+.karta{
+  background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy);
+  padding:24px 22px; box-shadow:var(--cien);
+}
+.karta h3{font-size:19px; margin-bottom:10px}
+.karta p{margin:0; font-size:14.5px; color:var(--atrament-70); line-height:1.5}
+.karta-ikona{
+  width:34px; height:34px; border-radius:var(--r); background:var(--akcent-tlo); color:var(--akcent);
+  display:flex; align-items:center; justify-content:center; margin-bottom:16px; font-size:17px;
+}
+
+/* ---------- Kategorie ---------- */
+.kategorie{display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:14px}
+.kat{
+  background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy);
+  padding:18px 20px; display:flex; flex-direction:column; gap:5px;
+  transition:border-color .12s, box-shadow .12s, transform .12s;
+}
+.kat:hover{border-color:var(--kreska-mocna); box-shadow:var(--cien); transform:translateY(-1px)}
+.kat-gora{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+.kat-nazwa{font-family:var(--serif); font-size:16.5px; font-weight:600}
+.kat-ile{font-size:12.5px; color:var(--atrament-45); white-space:nowrap; font-variant-numeric:tabular-nums}
+.kat-opis{font-size:13.5px; color:var(--atrament-70); line-height:1.45}
+
+/* ---------- Wybrane kalkulatory ---------- */
+.wybrane{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px}
+.wyb{
+  background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy);
+  padding:18px 20px; transition:border-color .12s, box-shadow .12s, transform .12s;
+}
+.wyb:hover{border-color:var(--kreska-mocna); box-shadow:var(--cien); transform:translateY(-1px)}
+.wyb-tytul{font-family:var(--serif); font-size:16.5px; font-weight:600; margin-bottom:6px}
+.wyb-opis{font-size:13.5px; color:var(--atrament-70); line-height:1.45}
+.wyb-kat{font-size:11.5px; color:var(--atrament-45); margin-top:10px; letter-spacing:.02em}
+
+/* ---------- Aplikacja mobilna ---------- */
+.mobilna{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center}
+.mobilna-lista{list-style:none; padding:0; margin:28px 0 32px; display:flex; flex-direction:column; gap:14px}
+.mobilna-lista li{display:flex; gap:12px; font-size:15px; color:var(--atrament-70); line-height:1.5}
+.mobilna-lista b{color:var(--atrament); font-weight:600}
+.ptak{color:var(--dobry); flex:none; font-weight:600}
+.sklepy{display:flex; flex-wrap:wrap; gap:12px; align-items:center}
+
+/* Odznaka sklepu. Bez adresu renderuje się jako zapowiedź, nie jako martwy odnośnik. */
+.odznaka{
+  display:inline-flex; align-items:center; gap:11px; padding:10px 18px 10px 15px;
+  border:1px solid var(--kreska-mocna); border-radius:var(--r-duzy); background:var(--karta);
+  transition:background .12s, border-color .12s;
+}
+a.odznaka:hover{background:var(--tlo-2); border-color:var(--atrament-45)}
+.odznaka-nieczynna{opacity:.62}
+.odznaka svg{flex:none}
+.odznaka-tekst{display:flex; flex-direction:column; line-height:1.2}
+.odznaka-mala{font-size:10.5px; color:var(--atrament-45); letter-spacing:.02em}
+.odznaka-duza{font-size:15px; font-weight:600; font-family:var(--serif)}
+
+.telefon-kol{display:flex; justify-content:center}
+.telefon{
+  width:100%; max-width:300px; padding:9px; margin:0;
+  background:var(--atrament); border-radius:38px; box-shadow:var(--cien-duzy);
+}
+.telefon-ekran{
+  border-radius:30px; overflow:hidden; background:var(--tlo); position:relative;
+  display:flex;
+}
+.telefon-ekran img{width:100%}
+/* Wycięcie na aparat — sam kształt, bez udawania konkretnego modelu. */
+.telefon-wciecie{
+  position:absolute; top:9px; left:50%; transform:translateX(-50%);
+  width:74px; height:19px; border-radius:11px; background:var(--atrament);
+}
+
+/* ---------- Prywatność ---------- */
+.prywatnosc{background:var(--karta)}
+.prywatnosc-siatka{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:start}
+.fakt{display:flex; gap:14px; padding:16px 0; border-bottom:1px solid var(--kreska)}
+.fakt:last-child{border-bottom:none}
+.fakt-t{font-weight:600; font-size:14.5px; margin-bottom:3px}
+.fakt-o{font-size:14px; color:var(--atrament-70); line-height:1.5; margin:0}
+
+/* ---------- FAQ ---------- */
+details{border-bottom:1px solid var(--kreska); padding:2px 0}
+details summary{
+  cursor:pointer; padding:17px 0; font-family:var(--serif); font-size:17.5px; font-weight:600;
+  list-style:none; display:flex; justify-content:space-between; align-items:center; gap:16px;
+}
+details summary::-webkit-details-marker{display:none}
+details summary::after{content:'+'; color:var(--atrament-45); font-size:20px; font-family:var(--sans); flex:none}
+details[open] summary::after{content:'−'}
+details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:70ch; line-height:1.6}
+
+/* ---------- Wezwanie i stopka ---------- */
+.wezwanie{text-align:center; border-bottom:none}
+.wezwanie h2{font-size:clamp(28px,4vw,44px); margin-bottom:16px}
+.wezwanie p{font-size:17px; color:var(--atrament-70); max-width:52ch; margin:0 auto 30px}
+.stopka{background:var(--karta); border-top:1px solid var(--kreska); padding:44px 0 36px; font-size:14px}
+.stopka-w{display:flex; flex-wrap:wrap; gap:32px; justify-content:space-between}
+.stopka-kol{display:flex; flex-direction:column; gap:9px}
+.stopka-kol b{font-size:13px; letter-spacing:.02em; margin-bottom:3px}
+.stopka a{color:var(--atrament-70)}
+.stopka a:hover{color:var(--atrament)}
+.stopka-dol{margin-top:34px; padding-top:22px; border-top:1px solid var(--kreska);
+  color:var(--atrament-45); font-size:13px; display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between}
+.zastrzezenie{
+  margin-top:20px; padding:14px 16px; background:var(--uwaga-tlo); border:1px solid var(--kreska);
+  border-radius:var(--r); font-size:13px; color:var(--atrament-70); line-height:1.5;
+}
+
+@media (max-width:900px){
+  .mobilna,.prywatnosc-siatka{grid-template-columns:1fr; gap:36px}
+  .liczby{grid-template-columns:repeat(2,1fr)}
+  .nawigacja{display:none}
+  section{padding:60px 0}
+  .hero{padding:52px 0 44px}
+}
+.etyk-krotka{display:none}
+/* Poniżej 360 px pełne wezwanie nie mieści się obok logo i przełącznika. */
+@media (max-width:359px){
+  .etyk-pelna{display:none}
+  .etyk-krotka{display:inline}
+}
+@media (max-width:560px){
+  /* Przy wąskim ekranie pasek musi zmieścić logo, motyw i wezwanie w jednym wierszu. */
+  .gora-w{gap:10px}
+  .logo{font-size:19px}
+  .gora-akcje .btn:not(.btn-motyw){padding:8px 12px; font-size:13.5px}
+  .hero-akcje .btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+
+<header class="gora">
+  <div class="srodek gora-w">
+    <a class="logo" href="#gora">Kalkulatory <span class="logo-znak">PL</span></a>
+    <nav class="nawigacja">
+      <a href="#mozliwosci">Możliwości</a>
+      <a href="#kategorie">Kategorie</a>
+      <a href="#aplikacja">Aplikacja</a>
+      <a href="#prywatnosc">Prywatność</a>
+    </nav>
+    <div class="gora-akcje">
+      <button class="btn btn-motyw" id="motyw" type="button" aria-label="Zmień motyw" title="Zmień motyw">◐</button>
+      <a class="btn btn-mocny" href="kalkulatory.html"><span class="etyk-pelna">Otwórz kalkulatory</span><span class="etyk-krotka">Otwórz</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="gora">
+
+  <!-- ---------------- Hero ---------------- -->
+  <section class="hero">
+    <div class="srodek">
+      <h1>Policz to sam, zanim zapytasz księgowej</h1>
+      <p class="hero-lead">
+        271 kalkulatorów liczących według polskich przepisów i stawek 2026 —
+        od wynagrodzenia i podatków, przez kredyt i najem, po delegacje i codzienne rachunki.
+        Wszystko liczy się na Twoim urządzeniu.
+      </p>
+      <div class="hero-akcje">
+        <a class="btn btn-mocny btn-duzy" href="kalkulatory.html">Otwórz kalkulatory</a>
+        <a class="btn btn-duzy" href="#aplikacja">Wersja na iPhone’a i Maca</a>
+      </div>
+      <p class="hero-drobne">Bez konta, bez instalacji, bez wysyłania danych. Działa też offline.</p>
+
+      <div class="liczby">
+        <div class="liczba"><div class="liczba-v">271</div><div class="liczba-l">kalkulatorów</div></div>
+        <div class="liczba"><div class="liczba-v">19</div><div class="liczba-l">kategorii tematycznych</div></div>
+        <div class="liczba"><div class="liczba-v">2026</div><div class="liczba-l">stawki i progi</div></div>
+        <div class="liczba"><div class="liczba-v">0</div><div class="liczba-l">danych wysyłanych na serwer</div></div>
+      </div>
+
+      <figure class="zrzut zrzut-ramka" style="margin:56px 0 0">
+        <div class="zrzut-pasek">
+          <span class="kropka"></span><span class="kropka"></span><span class="kropka"></span>
+          <span class="zrzut-adres">kalkulatory.html</span>
+        </div>
+        <img class="zrzut-jasny" src="obrazy/start-jasny.jpg" width="1600" height="1029"
+             alt="Lista kalkulatorów w jasnym motywie: wyszukiwarka, kategorie w panelu bocznym i kafle kalkulatorów płacowych.">
+        <img class="zrzut-ciemny" src="obrazy/start-ciemny.jpg" width="1600" height="1029"
+             alt="Ta sama lista kalkulatorów w motywie ciemnym.">
+      </figure>
+    </div>
+  </section>
+
+  <!-- ---------------- Możliwości ---------------- -->
+  <section id="mozliwosci">
+    <div class="srodek">
+      <p class="oko">Dlaczego to działa inaczej</p>
+      <h2 class="sekcja-tytul">Kalkulator, który pokazuje rachunek</h2>
+      <p class="sekcja-lead">
+        Większość kalkulatorów w sieci wyrzuca jedną liczbę i każe w nią wierzyć. Tutaj przy każdym
+        wyniku dostajesz rozbicie na składniki, użyte stawki i założenia — możesz je sprawdzić
+        albo zmienić.
+      </p>
+      <div class="karty">
+        <div class="karta">
+          <div class="karta-ikona">±</div>
+          <h3>Polskie przepisy, nie kalka z zagranicy</h3>
+          <p>Skala 12%/32%, kwota wolna, ZUS przedsiębiorcy, ryczałt, PCC, diety z rozporządzenia.
+             Wszystkie stawki siedzą w jednym pliku i są widoczne na stronie „Parametry”.</p>
+        </div>
+        <div class="karta">
+          <div class="karta-ikona">◵</div>
+          <h3>Widać, skąd wziął się wynik</h3>
+          <p>Pod każdą kwotą jest rozbicie, tabela i lista założeń. Nie musisz zgadywać, czy kalkulator
+             uwzględnił PPK, ulgę dla młodych albo limit 30-krotności.</p>
+        </div>
+        <div class="karta">
+          <div class="karta-ikona">⌂</div>
+          <h3>Działa bez internetu</h3>
+          <p>Cała aplikacja to jeden plik HTML. Zapisz go na dysku i otwieraj bez sieci —
+             w pociągu, u klienta, na budowie.</p>
+        </div>
+        <div class="karta">
+          <div class="karta-ikona">☆</div>
+          <h3>Ulubione i historia</h3>
+          <p>Kalkulatory, których używasz najczęściej, trzymasz pod ręką. Historia zapamiętuje
+             obliczenia, a formularze — ostatnio wpisane wartości.</p>
+        </div>
+        <div class="karta">
+          <div class="karta-ikona">🖶</div>
+          <h3>Dokumenty do druku</h3>
+          <p>Edytor delegacji wystawia polecenie wyjazdu i rachunek kosztów podróży — gotowe
+             do podpisu, z kursem waluty pobranym z tabeli NBP.</p>
+        </div>
+        <div class="karta">
+          <div class="karta-ikona">⇅</div>
+          <h3>Twoje dane są Twoje</h3>
+          <p>Jeden przycisk eksportuje wszystko do pliku JSON, drugi wczytuje kopię.
+             Format jest stabilny i ten sam w przeglądarce oraz w aplikacji.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- Kategorie ---------------- -->
+  <section id="kategorie">
+    <div class="srodek">
+      <p class="oko">19 kategorii, 271 pozycji</p>
+      <h2 class="sekcja-tytul">Od pierwszej wypłaty po rozliczenie spadku</h2>
+      <p class="sekcja-lead">
+        Zestaw rósł wokół pytań, które Polacy realnie wpisują w wyszukiwarkę — a nie wokół tego,
+        co najłatwiej policzyć.
+      </p>
+      <div class="kategorie">
+        <a class="kat" href="kalkulatory.html#/kat/praca">
+          <span class="kat-gora"><span class="kat-nazwa">Praca i wynagrodzenia</span><span class="kat-ile">26 kalkulatorów</span></span>
+          <span class="kat-opis">Etat, zlecenie, dzieło, B2B, urlopy, nadgodziny.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/podatki">
+          <span class="kat-gora"><span class="kat-nazwa">Podatki</span><span class="kat-ile">21 kalkulatorów</span></span>
+          <span class="kat-opis">PIT, VAT, ryczałt, PCC, spadki i darowizny.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/firma">
+          <span class="kat-gora"><span class="kat-nazwa">Firma i JDG</span><span class="kat-ile">19 kalkulatorów</span></span>
+          <span class="kat-opis">ZUS przedsiębiorcy, forma opodatkowania, marże, faktury.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/kredyty">
+          <span class="kat-gora"><span class="kat-nazwa">Kredyty i pożyczki</span><span class="kat-ile">18 kalkulatorów</span></span>
+          <span class="kat-opis">Raty, RRSO, nadpłata, zdolność, leasing.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/nieruchom">
+          <span class="kat-gora"><span class="kat-nazwa">Nieruchomości</span><span class="kat-ile">10 kalkulatorów</span></span>
+          <span class="kat-opis">Zakup, sprzedaż, koszty transakcyjne, opłacalność.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/najem">
+          <span class="kat-gora"><span class="kat-nazwa">Najem i rozliczenia</span><span class="kat-ile">10 kalkulatorów</span></span>
+          <span class="kat-opis">Podatek od najmu, media, podział kosztów na lokatorów.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/oszczedn">
+          <span class="kat-gora"><span class="kat-nazwa">Oszczędności</span><span class="kat-ile">14 kalkulatorów</span></span>
+          <span class="kat-opis">Procent składany, lokaty, obligacje, cele.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/inwest">
+          <span class="kat-gora"><span class="kat-nazwa">Inwestycje</span><span class="kat-ile">14 kalkulatorów</span></span>
+          <span class="kat-opis">ETF, akcje, dywidendy, portfel, ryzyko.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/emerytura">
+          <span class="kat-gora"><span class="kat-nazwa">Emerytura i ZUS</span><span class="kat-ile">13 kalkulatorów</span></span>
+          <span class="kat-opis">Prognoza emerytury, IKE, IKZE, PPK, kapitał.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/rodzina">
+          <span class="kat-gora"><span class="kat-nazwa">Rodzina i świadczenia</span><span class="kat-ile">10 kalkulatorów</span></span>
+          <span class="kat-opis">800+, alimenty, zasiłki, koszty dziecka.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/auto">
+          <span class="kat-gora"><span class="kat-nazwa">Auto i transport</span><span class="kat-ile">15 kalkulatorów</span></span>
+          <span class="kat-opis">Spalanie, koszt trasy, leasing, opony, akcyza.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/dom">
+          <span class="kat-gora"><span class="kat-nazwa">Dom i energia</span><span class="kat-ile">14 kalkulatorów</span></span>
+          <span class="kat-opis">Prąd, gaz, ogrzewanie, fotowoltaika, woda.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/budowa">
+          <span class="kat-gora"><span class="kat-nazwa">Budowa i remont</span><span class="kat-ile">13 kalkulatorów</span></span>
+          <span class="kat-opis">Farba, płytki, panele, beton, izolacja.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/czas">
+          <span class="kat-gora"><span class="kat-nazwa">Czas i daty</span><span class="kat-ile">17 kalkulatorów</span></span>
+          <span class="kat-opis">Dni robocze, terminy, wiek, grafik godzin.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/codzien">
+          <span class="kat-gora"><span class="kat-nazwa">Codzienne liczenie</span><span class="kat-ile">14 kalkulatorów</span></span>
+          <span class="kat-opis">Rachunek do podziału, rabaty, cena za kg, paczki.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/zdrowie">
+          <span class="kat-gora"><span class="kat-nazwa">Zdrowie i ciało</span><span class="kat-ile">12 kalkulatorów</span></span>
+          <span class="kat-opis">BMI, zapotrzebowanie, nawodnienie, ciąża.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/matma">
+          <span class="kat-gora"><span class="kat-nazwa">Matematyka i jednostki</span><span class="kat-ile">17 kalkulatorów</span></span>
+          <span class="kat-opis">Procenty, proporcje, przeliczniki, geometria.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/prawo">
+          <span class="kat-gora"><span class="kat-nazwa">Prawo i urzędy</span><span class="kat-ile">10 kalkulatorów</span></span>
+          <span class="kat-opis">Odsetki, opłaty sądowe, waloryzacja, kary.</span>
+        </a>
+        <a class="kat" href="kalkulatory.html#/kat/tekst">
+          <span class="kat-gora"><span class="kat-nazwa">Tekst i pisanie</span><span class="kat-ile">4 kalkulatory</span></span>
+          <span class="kat-opis">Statystyki tekstu, strony rozliczeniowe, limity znaków.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- Wybrane ---------------- -->
+  <section>
+    <div class="srodek">
+      <p class="oko">Na dobry początek</p>
+      <h2 class="sekcja-tytul">Najczęściej otwierane</h2>
+      <p class="sekcja-lead">Kliknij, żeby wejść prosto w kalkulator.</p>
+      <div class="wybrane">
+        <a class="wyb" href="kalkulatory.html#/k/uop-brutto-netto">
+          <div class="wyb-tytul">Wynagrodzenie brutto → netto (umowa o pracę)</div>
+          <div class="wyb-opis">Ile zostanie na koncie z pensji brutto. Ze składkami, PIT-2, PPK i ulgą dla młodych.</div>
+          <div class="wyb-kat">Praca i wynagrodzenia</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/rata-kredytu">
+          <div class="wyb-tytul">Rata kredytu i harmonogram spłaty</div>
+          <div class="wyb-opis">Rata równa czy malejąca, pełny harmonogram i całkowity koszt odsetek.</div>
+          <div class="wyb-kat">Kredyty i pożyczki</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/delegacja">
+          <div class="wyb-tytul">Delegacja — rozliczenie i druk podróży służbowej</div>
+          <div class="wyb-opis">Diety krajowe i zagraniczne z potrąceniami za posiłki, noclegi, przejazdy i zaliczka. Z gotowym drukiem polecenia wyjazdu i rachunku kosztów.</div>
+          <div class="wyb-kat">Praca i wynagrodzenia</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/pit-roczny">
+          <div class="wyb-tytul">PIT roczny — dopłata czy zwrot</div>
+          <div class="wyb-opis">Rozliczenie roczne na skali: dochód, odliczenia, ulgi i wynik po zaliczkach.</div>
+          <div class="wyb-kat">Podatki</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/zus-przedsiebiorcy">
+          <div class="wyb-tytul">Składki ZUS przedsiębiorcy</div>
+          <div class="wyb-opis">Pełny ZUS, preferencyjny, ulga na start — ile płacisz co miesiąc w 2026 r.</div>
+          <div class="wyb-kat">Firma i JDG</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/rentownosc-najmu">
+          <div class="wyb-tytul">Rentowność mieszkania na wynajem</div>
+          <div class="wyb-opis">Stopa zwrotu brutto i netto, po kosztach, podatku i pustostanach.</div>
+          <div class="wyb-kat">Najem i rozliczenia</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/procent-skladany">
+          <div class="wyb-tytul">Procent składany</div>
+          <div class="wyb-opis">Jak rośnie kapitał przy regularnych wpłatach. Z podatkiem Belki i inflacją.</div>
+          <div class="wyb-kat">Oszczędności</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/wymiar-urlopu">
+          <div class="wyb-tytul">Wymiar urlopu wypoczynkowego</div>
+          <div class="wyb-opis">20 czy 26 dni — z doliczeniem lat nauki i przeliczeniem na niepełny etat.</div>
+          <div class="wyb-kat">Praca i wynagrodzenia</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/prognoza-emerytury">
+          <div class="wyb-tytul">Prognoza emerytury z ZUS</div>
+          <div class="wyb-opis">Ile wyniesie świadczenie przy Twoich zarobkach i stażu — oraz jaka będzie stopa zastąpienia.</div>
+          <div class="wyb-kat">Emerytura i ZUS</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/spalanie-paliwa">
+          <div class="wyb-tytul">Spalanie i koszt paliwa</div>
+          <div class="wyb-opis">Realne spalanie z przejechanego dystansu i zatankowanych litrów.</div>
+          <div class="wyb-kat">Auto i transport</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/statystyki-tekstu">
+          <div class="wyb-tytul">Statystyki tekstu — znaki, słowa, zdania</div>
+          <div class="wyb-opis">Liczba znaków ze spacjami i bez, słów, zdań, akapitów oraz czas czytania.</div>
+          <div class="wyb-kat">Tekst i pisanie</div>
+        </a>
+        <a class="wyb" href="kalkulatory.html#/k/rachunek-za-prad">
+          <div class="wyb-tytul">Rachunek za prąd</div>
+          <div class="wyb-opis">Od kilowatogodzin do kwoty na fakturze — z opłatami stałymi i dystrybucją.</div>
+          <div class="wyb-kat">Dom i energia</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- Aplikacja mobilna ---------------- -->
+  <section id="aplikacja">
+    <div class="srodek">
+      <div class="mobilna">
+        <div>
+          <p class="oko">iPhone · iPad · Mac</p>
+          <h2 class="sekcja-tytul">Ten sam zestaw w natywnej aplikacji</h2>
+          <p class="sekcja-lead" style="margin-bottom:0">
+            Aplikacja na urządzenia Apple to ta sama, sprawdzona logika w natywnej powłoce SwiftUI —
+            z tym, czego przeglądarka nie potrafi.
+          </p>
+          <ul class="mobilna-lista">
+            <li><span class="ptak">✓</span><span><b>Synchronizacja przez iCloud Drive.</b>
+              Ulubione, historia i zapisane delegacje wędrują między telefonem, iPadem i Makiem.</span></li>
+            <li><span class="ptak">✓</span><span><b>Eksport delegacji do PDF.</b>
+              Polecenie wyjazdu i rachunek kosztów prosto z telefonu, gotowe do wysłania.</span></li>
+            <li><span class="ptak">✓</span><span><b>Kursy walut z API NBP.</b>
+              Średni kurs z dnia poprzedzającego rozliczenie, z numerem tabeli.</span></li>
+            <li><span class="ptak">✓</span><span><b>Działa bez sieci.</b>
+              Wszystkie obliczenia są w aplikacji, nie na serwerze.</span></li>
+          </ul>
+          <div class="sklepy">
+            <span class="odznaka odznaka-nieczynna">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 12.75c.02 2.5 2.2 3.34 2.22 3.35-.02.06-.35 1.2-1.15 2.37-.69 1.02-1.4 2.03-2.53 2.05-1.1.02-1.46-.65-2.72-.65-1.26 0-1.66.63-2.7.67-1.09.04-1.92-1.1-2.61-2.11-1.42-2.06-2.5-5.82-1.05-8.36.72-1.26 2.01-2.06 3.41-2.08 1.07-.02 2.08.72 2.73.72.66 0 1.88-.89 3.17-.76.54.02 2.06.22 3.03 1.64-.08.05-1.81 1.06-1.8 3.16zM14.3 5.6c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.53.62-1 1.61-.87 2.56.93.07 1.87-.47 2.45-1.16z"/></svg>
+              <span class="odznaka-tekst"><span class="odznaka-mala">Wkrótce w</span><span class="odznaka-duza">App Store</span></span>
+            </span>
+            <span style="font-size:13.5px; color:var(--atrament-45); max-width:30ch">Aplikacja jest gotowa i czeka na publikację. Do tego czasu korzystaj z wersji webowej — liczy dokładnie to samo.</span>
+          </div>
+        </div>
+        <div class="telefon-kol">
+          <figure class="telefon">
+            <div class="telefon-ekran">
+              <span class="telefon-wciecie"></span>
+              <img class="zrzut-jasny" src="obrazy/telefon-jasny.jpg" width="780" height="1688"
+                   alt="Kalkulator wynagrodzenia na ekranie telefonu: formularz z kwotą brutto i wynikiem na rękę.">
+              <img class="zrzut-ciemny" src="obrazy/telefon-ciemny.jpg" width="780" height="1688"
+                   alt="Ten sam widok na telefonie w motywie ciemnym.">
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- Prywatność ---------------- -->
+  <section id="prywatnosc" class="prywatnosc">
+    <div class="srodek">
+      <div class="prywatnosc-siatka">
+        <div>
+          <p class="oko">Prywatność</p>
+          <h2 class="sekcja-tytul">Twoja pensja to nie jest niczyj interes</h2>
+          <p class="sekcja-lead" style="margin-bottom:0">
+            Kalkulatory finansowe wiedzą o Tobie więcej niż bank: ile zarabiasz, ile masz kredytu,
+            ilu masz pracowników. Dlatego tutaj obliczenia w ogóle nie opuszczają urządzenia —
+            nie z polityki prywatności, tylko z konstrukcji.
+          </p>
+        </div>
+        <div>
+          <div class="fakt">
+            <div>
+              <div class="fakt-t">Nie ma konta ani logowania</div>
+              <p class="fakt-o">Nie zbieramy adresu e-mail, bo nie ma gdzie go wpisać.</p>
+            </div>
+          </div>
+          <div class="fakt">
+            <div>
+              <div class="fakt-t">Nie ma analityki ani skryptów śledzących</div>
+              <p class="fakt-o">Żadnego Google Analytics, pikseli ani zewnętrznych bibliotek.</p>
+            </div>
+          </div>
+          <div class="fakt">
+            <div>
+              <div class="fakt-t">Obliczenia liczą się w przeglądarce</div>
+              <p class="fakt-o">Wpisane kwoty nigdzie nie są wysyłane — cały silnik podatkowy działa lokalnie.</p>
+            </div>
+          </div>
+          <div class="fakt">
+            <div>
+              <div class="fakt-t">Jedyne zapytanie sieciowe: kurs waluty</div>
+              <p class="fakt-o">Do <code>api.nbp.pl</code>, wyłącznie po kliknięciu przycisku
+                 w edytorze delegacji. Wysyłany jest kod waluty i data — nic więcej.</p>
+            </div>
+          </div>
+          <div class="fakt">
+            <div>
+              <div class="fakt-t">Dane zostają na urządzeniu</div>
+              <p class="fakt-o">Ulubione i historia trafiają do pamięci przeglądarki, a w aplikacji Apple
+                 do Twojego iCloud Drive. My nie mamy do nich dostępu.</p>
+            </div>
+          </div>
+          <p class="zastrzezenie">
+            Dla porządku: ta strona i aplikacja webowa pobierają kroje pisma z Google Fonts,
+            co oznacza zapytanie do serwerów Google przy pierwszym wczytaniu. Przy braku sieci
+            używane są kroje systemowe, a same obliczenia i tak dzieją się wyłącznie u Ciebie.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------- FAQ ---------------- -->
+  <section>
+    <div class="srodek" style="max-width:800px">
+      <p class="oko">Pytania</p>
+      <h2 class="sekcja-tytul" style="margin-bottom:32px">Zanim zapytasz</h2>
+
+      <details open>
+        <summary>Czy to jest darmowe?</summary>
+        <p>Tak, w całości i bez ograniczeń. Nie ma wersji płatnej, limitu obliczeń ani funkcji
+           schowanych za rejestracją.</p>
+      </details>
+      <details>
+        <summary>Skąd pewność, że stawki są aktualne?</summary>
+        <p>Wszystkie progi, stawki i limity są w jednym pliku parametrów, a ich wartości —
+           razem ze źródłem — widać na stronie „Parametry 2026” w samej aplikacji.
+           Możesz je sprawdzić przed użyciem wyniku.</p>
+      </details>
+      <details>
+        <summary>Czy mogę używać tego w pracy zawodowo?</summary>
+        <p>Kalkulatory mają charakter informacyjny i pomagają oszacować kwoty oraz zrozumieć,
+           z czego się składają. Nie zastępują porady księgowego, doradcy podatkowego ani prawnika —
+           przy ważnych decyzjach zweryfikuj wynik u specjalisty.</p>
+      </details>
+      <details>
+        <summary>Czy działa na telefonie?</summary>
+        <p>Tak. Strona jest responsywna i działa w przeglądarce mobilnej. Dla urządzeń Apple
+           jest dodatkowo natywna aplikacja z synchronizacją przez iCloud i eksportem PDF.</p>
+      </details>
+      <details>
+        <summary>Czy mogę zapisać aplikację na dysku?</summary>
+        <p>Tak — to jeden plik <code>kalkulatory.html</code>. Zapisz go u siebie i otwieraj
+           dwuklikiem, także bez internetu.</p>
+      </details>
+      <details>
+        <summary>Co się stanie z moimi danymi, gdy wyczyszczę przeglądarkę?</summary>
+        <p>Ulubione i historia zniknął razem z pamięcią przeglądarki. Zanim to zrobisz,
+           wyeksportuj kopię do pliku JSON na stronie „Twoje dane” — wczytasz ją później
+           w przeglądarce albo w aplikacji na iPhonie.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ---------------- Wezwanie ---------------- -->
+  <section class="wezwanie">
+    <div class="srodek">
+      <h2>Sprawdź swoją pierwszą kwotę</h2>
+      <p>Bez zakładania konta i bez podawania czegokolwiek o sobie. Otwiera się od razu.</p>
+      <a class="btn btn-mocny btn-duzy" href="kalkulatory.html">Otwórz 271 kalkulatorów</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="stopka">
+  <div class="srodek">
+    <div class="stopka-w">
+      <div class="stopka-kol">
+        <b>Kalkulatory PL</b>
+        <a href="kalkulatory.html">Otwórz aplikację</a>
+        <a href="#kategorie">Kategorie</a>
+        <a href="#aplikacja">Wersja na Apple</a>
+      </div>
+      <div class="stopka-kol">
+        <b>Popularne</b>
+        <a href="kalkulatory.html#/k/uop-brutto-netto">Wynagrodzenie brutto → netto (umowa o pracę)</a>
+        <a href="kalkulatory.html#/k/rata-kredytu">Rata kredytu i harmonogram spłaty</a>
+        <a href="kalkulatory.html#/k/delegacja">Delegacja — rozliczenie i druk podróży służbowej</a>
+        <a href="kalkulatory.html#/k/pit-roczny">PIT roczny — dopłata czy zwrot</a>
+        <a href="kalkulatory.html#/k/zus-przedsiebiorcy">Składki ZUS przedsiębiorcy</a>
+      </div>
+      <div class="stopka-kol">
+        <b>Zaufanie</b>
+        <a href="#prywatnosc">Prywatność</a>
+        <a href="kalkulatory.html#/parametry">Parametry 2026</a>
+        <a href="kalkulatory.html#/dane">Twoje dane</a>
+      </div>
+    </div>
+    <div class="stopka-dol">
+      <span>Stawki i progi na 2026 rok. Aktualizacja: 2026-09-09.</span>
+      <span>Kalkulatory mają charakter informacyjny i nie zastępują porady specjalisty.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Przełącznik motywu. Czyta i zapisuje ten sam klucz co aplikacja
+   (kalkulatory.ustawienia), więc wybrany motyw przenosi się na kalkulatory
+   i z powrotem — o ile strona i kalkulatory.html stoją na tym samym adresie. */
+(function () {
+  var KLUCZ = 'kalkulatory.ustawienia';
+  var KOLEJNOSC = ['auto', 'jasny', 'ciemny'];
+  var ZNAKI = { auto: '\u25D0', jasny: '\u2600', ciemny: '\u263E' };
+  var OPISY = { auto: 'Motyw: systemowy', jasny: 'Motyw: jasny', ciemny: 'Motyw: ciemny' };
+  var korzen = document.documentElement;
+  var przycisk = document.getElementById('motyw');
+
+  function ustawienia() {
+    try {
+      var raw = localStorage.getItem(KLUCZ);
+      var v = raw ? JSON.parse(raw) : null;
+      return (v && typeof v === 'object') ? v : {};
+    } catch (e) { return {}; }
+  }
+  function ustaw(m) {
+    korzen.setAttribute('data-motyw', m);
+    przycisk.textContent = ZNAKI[m];
+    przycisk.title = OPISY[m];
+    przycisk.setAttribute('aria-label', OPISY[m]);
+    try {
+      // Scalamy, żeby nie skasować pozostałych ustawień zapisanych przez aplikację.
+      var u = ustawienia(); u.motyw = m;
+      localStorage.setItem(KLUCZ, JSON.stringify(u));
+    } catch (e) { /* tryb prywatny albo file:// — motyw zadziała tylko na tej stronie */ }
+  }
+
+  var start = ustawienia().motyw;
+  ustaw(KOLEJNOSC.indexOf(start) !== -1 ? start : 'auto');
+
+  przycisk.addEventListener('click', function () {
+    var teraz = korzen.getAttribute('data-motyw') || 'auto';
+    ustaw(KOLEJNOSC[(KOLEJNOSC.indexOf(teraz) + 1) % KOLEJNOSC.length]);
+  });
+})();
+</script>
+
+</body>
+</html>
