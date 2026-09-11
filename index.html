@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kalkulatory PL — 271 kalkulatorów na polskich przepisach 2026</title>
-<meta name="description" content="271 kalkulatorów liczących według polskich przepisów i stawek 2026: wynagrodzenia, podatki, kredyty, nieruchomości, delegacje. Wszystko liczy się na Twoim urządzeniu — bez konta, bez śledzenia, offline.">
+<title>Kalkulatory PL — 273 kalkulatorów na polskich przepisach 2026</title>
+<meta name="description" content="273 kalkulatorów liczących według polskich przepisów i stawek 2026: wynagrodzenia, podatki, kredyty, nieruchomości, delegacje. Wszystko liczy się na Twoim urządzeniu — bez konta, bez śledzenia, offline.">
 <meta name="color-scheme" content="light dark">
-<link rel="canonical" href="https://kalkulatory-www.vercel.com/">
+<link rel="canonical" href="https://kalkulatory.example.pl/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Kalkulatory PL — 271 kalkulatorów na polskich przepisach">
+<meta property="og:title" content="Kalkulatory PL — 273 kalkulatorów na polskich przepisach">
 <meta property="og:description" content="Wynagrodzenia, podatki, kredyty, delegacje i codzienne liczenie. Działa offline, bez konta i bez wysyłania danych.">
-<meta property="og:image" content="https://kalkulatory-www.vercel.com/obrazy/start-jasny.jpg">
+<meta property="og:image" content="https://kalkulatory.example.pl/obrazy/start-jasny.jpg">
 <meta property="og:locale" content="pl_PL">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -166,13 +166,39 @@ section[id],main[id]{scroll-margin-top:78px}
 /* ---------- Kategorie ---------- */
 .kategorie{display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:14px}
 .kat{
-  background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy);
+  background:hsl(var(--kat-h,210) 58% 97.5%); border:1px solid hsl(var(--kat-h,210) 40% 90%);
+  border-radius:var(--r-duzy);
   padding:18px 20px; display:flex; flex-direction:column; gap:5px;
-  transition:border-color .12s, box-shadow .12s, transform .12s;
+  transition:border-color .12s, box-shadow .12s, transform .12s, background .12s;
+  border-left:4px solid hsl(var(--kat-h,210) 50% 48%);
 }
+.kat:hover{background:hsl(var(--kat-h,210) 60% 95.5%)}
+.kat .kat-ile{color:hsl(var(--kat-h,210) 40% 45%)}
 .kat:hover{border-color:var(--kreska-mocna); box-shadow:var(--cien); transform:translateY(-1px)}
 .kat-gora{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
 .kat-nazwa{font-family:var(--serif); font-size:16.5px; font-weight:600}
+@media (prefers-color-scheme: dark){
+  :root:not([data-motyw="jasny"]) .kat{
+    background:hsl(var(--kat-h,210) 26% 13.5%);
+    border-color:hsl(var(--kat-h,210) 26% 24%);
+    border-left-color:hsl(var(--kat-h,210) 55% 58%);
+  }
+  :root:not([data-motyw="jasny"]) .kat:hover{background:hsl(var(--kat-h,210) 28% 16%)}
+  :root:not([data-motyw="jasny"]) .kat .kat-ile{color:hsl(var(--kat-h,210) 40% 62%)}
+  :root:not([data-motyw="jasny"]) .wyb{border-left-color:hsl(var(--kat-h,210) 35% 38%)}
+  :root:not([data-motyw="jasny"]) .wyb:hover{border-left-color:hsl(var(--kat-h,210) 55% 60%)}
+  :root:not([data-motyw="jasny"]) .wyb-kat.kat-kolor{color:hsl(var(--kat-h,210) 50% 68%)}
+}
+:root[data-motyw="ciemny"] .kat{
+  background:hsl(var(--kat-h,210) 26% 13.5%);
+  border-color:hsl(var(--kat-h,210) 26% 24%);
+  border-left-color:hsl(var(--kat-h,210) 55% 58%);
+}
+:root[data-motyw="ciemny"] .kat:hover{background:hsl(var(--kat-h,210) 28% 16%)}
+:root[data-motyw="ciemny"] .kat .kat-ile{color:hsl(var(--kat-h,210) 40% 62%)}
+:root[data-motyw="ciemny"] .wyb{border-left-color:hsl(var(--kat-h,210) 35% 38%)}
+:root[data-motyw="ciemny"] .wyb:hover{border-left-color:hsl(var(--kat-h,210) 55% 60%)}
+:root[data-motyw="ciemny"] .wyb-kat.kat-kolor{color:hsl(var(--kat-h,210) 50% 68%)}
 .kat-ile{font-size:12.5px; color:var(--atrament-45); white-space:nowrap; font-variant-numeric:tabular-nums}
 .kat-opis{font-size:13.5px; color:var(--atrament-70); line-height:1.45}
 
@@ -181,7 +207,10 @@ section[id],main[id]{scroll-margin-top:78px}
 .wyb{
   background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy);
   padding:18px 20px; transition:border-color .12s, box-shadow .12s, transform .12s;
+  border-left:3px solid hsl(var(--kat-h,210) 45% 70%);
 }
+.wyb:hover{border-left-color:hsl(var(--kat-h,210) 52% 50%)}
+.wyb-kat.kat-kolor{color:hsl(var(--kat-h,210) 48% 38%)}
 .wyb:hover{border-color:var(--kreska-mocna); box-shadow:var(--cien); transform:translateY(-1px)}
 .wyb-tytul{font-family:var(--serif); font-size:16.5px; font-weight:600; margin-bottom:6px}
 .wyb-opis{font-size:13.5px; color:var(--atrament-70); line-height:1.45}
@@ -310,7 +339,7 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
     <div class="srodek">
       <h1>Policz to sam, zanim zapytasz księgowej</h1>
       <p class="hero-lead">
-        271 kalkulatorów liczących według polskich przepisów i stawek 2026 —
+        273 kalkulatorów liczących według polskich przepisów i stawek 2026 —
         od wynagrodzenia i podatków, przez kredyt i najem, po delegacje i codzienne rachunki.
         Wszystko liczy się na Twoim urządzeniu.
       </p>
@@ -321,8 +350,8 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
       <p class="hero-drobne">Bez konta, bez instalacji, bez wysyłania danych. Działa też offline.</p>
 
       <div class="liczby">
-        <div class="liczba"><div class="liczba-v">271</div><div class="liczba-l">kalkulatorów</div></div>
-        <div class="liczba"><div class="liczba-v">19</div><div class="liczba-l">kategorii tematycznych</div></div>
+        <div class="liczba"><div class="liczba-v">273</div><div class="liczba-l">kalkulatorów</div></div>
+        <div class="liczba"><div class="liczba-v">20</div><div class="liczba-l">kategorii tematycznych</div></div>
         <div class="liczba"><div class="liczba-v">2026</div><div class="liczba-l">stawki i progi</div></div>
         <div class="liczba"><div class="liczba-v">0</div><div class="liczba-l">danych wysyłanych na serwer</div></div>
       </div>
@@ -394,86 +423,90 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
   <!-- ---------------- Kategorie ---------------- -->
   <section id="kategorie">
     <div class="srodek">
-      <p class="oko">19 kategorii, 271 pozycji</p>
+      <p class="oko">20 kategorii, 273 pozycji</p>
       <h2 class="sekcja-tytul">Od pierwszej wypłaty po rozliczenie spadku</h2>
       <p class="sekcja-lead">
         Zestaw rósł wokół pytań, które Polacy realnie wpisują w wyszukiwarkę — a nie wokół tego,
         co najłatwiej policzyć.
       </p>
       <div class="kategorie">
-        <a class="kat" href="kalkulatory.html#/kat/praca">
+        <a class="kat" style="--kat-h:210" href="kalkulatory.html#/kat/praca">
           <span class="kat-gora"><span class="kat-nazwa">Praca i wynagrodzenia</span><span class="kat-ile">26 kalkulatorów</span></span>
           <span class="kat-opis">Etat, zlecenie, dzieło, B2B, urlopy, nadgodziny.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/podatki">
+        <a class="kat" style="--kat-h:348" href="kalkulatory.html#/kat/podatki">
           <span class="kat-gora"><span class="kat-nazwa">Podatki</span><span class="kat-ile">21 kalkulatorów</span></span>
           <span class="kat-opis">PIT, VAT, ryczałt, PCC, spadki i darowizny.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/firma">
+        <a class="kat" style="--kat-h:125" href="kalkulatory.html#/kat/firma">
           <span class="kat-gora"><span class="kat-nazwa">Firma i JDG</span><span class="kat-ile">19 kalkulatorów</span></span>
           <span class="kat-opis">ZUS przedsiębiorcy, forma opodatkowania, marże, faktury.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/kredyty">
+        <a class="kat" style="--kat-h:262" href="kalkulatory.html#/kat/kredyty">
           <span class="kat-gora"><span class="kat-nazwa">Kredyty i pożyczki</span><span class="kat-ile">18 kalkulatorów</span></span>
           <span class="kat-opis">Raty, RRSO, nadpłata, zdolność, leasing.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/nieruchom">
+        <a class="kat" style="--kat-h:40" href="kalkulatory.html#/kat/nieruchom">
           <span class="kat-gora"><span class="kat-nazwa">Nieruchomości</span><span class="kat-ile">10 kalkulatorów</span></span>
           <span class="kat-opis">Zakup, sprzedaż, koszty transakcyjne, opłacalność.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/najem">
+        <a class="kat" style="--kat-h:178" href="kalkulatory.html#/kat/najem">
           <span class="kat-gora"><span class="kat-nazwa">Najem i rozliczenia</span><span class="kat-ile">10 kalkulatorów</span></span>
           <span class="kat-opis">Podatek od najmu, media, podział kosztów na lokatorów.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/oszczedn">
+        <a class="kat" style="--kat-h:315" href="kalkulatory.html#/kat/oszczedn">
           <span class="kat-gora"><span class="kat-nazwa">Oszczędności</span><span class="kat-ile">14 kalkulatorów</span></span>
           <span class="kat-opis">Procent składany, lokaty, obligacje, cele.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/inwest">
+        <a class="kat" style="--kat-h:92" href="kalkulatory.html#/kat/inwest">
           <span class="kat-gora"><span class="kat-nazwa">Inwestycje</span><span class="kat-ile">14 kalkulatorów</span></span>
           <span class="kat-opis">ETF, akcje, dywidendy, portfel, ryzyko.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/emerytura">
+        <a class="kat" style="--kat-h:230" href="kalkulatory.html#/kat/emerytura">
           <span class="kat-gora"><span class="kat-nazwa">Emerytura i ZUS</span><span class="kat-ile">13 kalkulatorów</span></span>
           <span class="kat-opis">Prognoza emerytury, IKE, IKZE, PPK, kapitał.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/rodzina">
+        <a class="kat" style="--kat-h:8" href="kalkulatory.html#/kat/rodzina">
           <span class="kat-gora"><span class="kat-nazwa">Rodzina i świadczenia</span><span class="kat-ile">10 kalkulatorów</span></span>
           <span class="kat-opis">800+, alimenty, zasiłki, koszty dziecka.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/auto">
+        <a class="kat" style="--kat-h:145" href="kalkulatory.html#/kat/auto">
           <span class="kat-gora"><span class="kat-nazwa">Auto i transport</span><span class="kat-ile">15 kalkulatorów</span></span>
           <span class="kat-opis">Spalanie, koszt trasy, leasing, opony, akcyza.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/dom">
+        <a class="kat" style="--kat-h:282" href="kalkulatory.html#/kat/dom">
           <span class="kat-gora"><span class="kat-nazwa">Dom i energia</span><span class="kat-ile">14 kalkulatorów</span></span>
           <span class="kat-opis">Prąd, gaz, ogrzewanie, fotowoltaika, woda.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/budowa">
+        <a class="kat" style="--kat-h:60" href="kalkulatory.html#/kat/budowa">
           <span class="kat-gora"><span class="kat-nazwa">Budowa i remont</span><span class="kat-ile">13 kalkulatorów</span></span>
           <span class="kat-opis">Farba, płytki, panele, beton, izolacja.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/czas">
+        <a class="kat" style="--kat-h:198" href="kalkulatory.html#/kat/czas">
           <span class="kat-gora"><span class="kat-nazwa">Czas i daty</span><span class="kat-ile">17 kalkulatorów</span></span>
           <span class="kat-opis">Dni robocze, terminy, wiek, grafik godzin.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/codzien">
+        <a class="kat" style="--kat-h:335" href="kalkulatory.html#/kat/codzien">
           <span class="kat-gora"><span class="kat-nazwa">Codzienne liczenie</span><span class="kat-ile">14 kalkulatorów</span></span>
           <span class="kat-opis">Rachunek do podziału, rabaty, cena za kg, paczki.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/zdrowie">
-          <span class="kat-gora"><span class="kat-nazwa">Zdrowie i ciało</span><span class="kat-ile">12 kalkulatorów</span></span>
-          <span class="kat-opis">BMI, zapotrzebowanie, nawodnienie, ciąża.</span>
+        <a class="kat" style="--kat-h:112" href="kalkulatory.html#/kat/zdrowie">
+          <span class="kat-gora"><span class="kat-nazwa">Zdrowie i ciało</span><span class="kat-ile">5 kalkulatorów</span></span>
+          <span class="kat-opis">Nawodnienie, dawki leków, promile, sen, ciąża.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/matma">
+        <a class="kat" style="--kat-h:250" href="kalkulatory.html#/kat/forma">
+          <span class="kat-gora"><span class="kat-nazwa">Masa ciała i forma</span><span class="kat-ile">9 kalkulatorów</span></span>
+          <span class="kat-opis">BMI, waga należna, odchudzanie, kalorie, tętno, trening.</span>
+        </a>
+        <a class="kat" style="--kat-h:28" href="kalkulatory.html#/kat/matma">
           <span class="kat-gora"><span class="kat-nazwa">Matematyka i jednostki</span><span class="kat-ile">17 kalkulatorów</span></span>
           <span class="kat-opis">Procenty, proporcje, przeliczniki, geometria.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/prawo">
+        <a class="kat" style="--kat-h:165" href="kalkulatory.html#/kat/prawo">
           <span class="kat-gora"><span class="kat-nazwa">Prawo i urzędy</span><span class="kat-ile">10 kalkulatorów</span></span>
           <span class="kat-opis">Odsetki, opłaty sądowe, waloryzacja, kary.</span>
         </a>
-        <a class="kat" href="kalkulatory.html#/kat/tekst">
+        <a class="kat" style="--kat-h:302" href="kalkulatory.html#/kat/tekst">
           <span class="kat-gora"><span class="kat-nazwa">Tekst i pisanie</span><span class="kat-ile">4 kalkulatory</span></span>
           <span class="kat-opis">Statystyki tekstu, strony rozliczeniowe, limity znaków.</span>
         </a>
@@ -488,65 +521,65 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
       <h2 class="sekcja-tytul">Najczęściej otwierane</h2>
       <p class="sekcja-lead">Kliknij, żeby wejść prosto w kalkulator.</p>
       <div class="wybrane">
-        <a class="wyb" href="kalkulatory.html#/k/uop-brutto-netto">
+        <a class="wyb" style="--kat-h:210" href="kalkulatory.html#/k/uop-brutto-netto">
           <div class="wyb-tytul">Wynagrodzenie brutto → netto (umowa o pracę)</div>
           <div class="wyb-opis">Ile zostanie na koncie z pensji brutto. Ze składkami, PIT-2, PPK i ulgą dla młodych.</div>
-          <div class="wyb-kat">Praca i wynagrodzenia</div>
+          <div class="wyb-kat kat-kolor">Praca i wynagrodzenia</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/rata-kredytu">
+        <a class="wyb" style="--kat-h:262" href="kalkulatory.html#/k/rata-kredytu">
           <div class="wyb-tytul">Rata kredytu i harmonogram spłaty</div>
           <div class="wyb-opis">Rata równa czy malejąca, pełny harmonogram i całkowity koszt odsetek.</div>
-          <div class="wyb-kat">Kredyty i pożyczki</div>
+          <div class="wyb-kat kat-kolor">Kredyty i pożyczki</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/delegacja">
+        <a class="wyb" style="--kat-h:210" href="kalkulatory.html#/k/delegacja">
           <div class="wyb-tytul">Delegacja — rozliczenie i druk podróży służbowej</div>
           <div class="wyb-opis">Diety krajowe i zagraniczne z potrąceniami za posiłki, noclegi, przejazdy i zaliczka. Z gotowym drukiem polecenia wyjazdu i rachunku kosztów.</div>
-          <div class="wyb-kat">Praca i wynagrodzenia</div>
+          <div class="wyb-kat kat-kolor">Praca i wynagrodzenia</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/pit-roczny">
+        <a class="wyb" style="--kat-h:348" href="kalkulatory.html#/k/pit-roczny">
           <div class="wyb-tytul">PIT roczny — dopłata czy zwrot</div>
           <div class="wyb-opis">Rozliczenie roczne na skali: dochód, odliczenia, ulgi i wynik po zaliczkach.</div>
-          <div class="wyb-kat">Podatki</div>
+          <div class="wyb-kat kat-kolor">Podatki</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/zus-przedsiebiorcy">
+        <a class="wyb" style="--kat-h:125" href="kalkulatory.html#/k/zus-przedsiebiorcy">
           <div class="wyb-tytul">Składki ZUS przedsiębiorcy</div>
           <div class="wyb-opis">Pełny ZUS, preferencyjny, ulga na start — ile płacisz co miesiąc w 2026 r.</div>
-          <div class="wyb-kat">Firma i JDG</div>
+          <div class="wyb-kat kat-kolor">Firma i JDG</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/rentownosc-najmu">
+        <a class="wyb" style="--kat-h:178" href="kalkulatory.html#/k/rentownosc-najmu">
           <div class="wyb-tytul">Rentowność mieszkania na wynajem</div>
           <div class="wyb-opis">Stopa zwrotu brutto i netto, po kosztach, podatku i pustostanach.</div>
-          <div class="wyb-kat">Najem i rozliczenia</div>
+          <div class="wyb-kat kat-kolor">Najem i rozliczenia</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/procent-skladany">
+        <a class="wyb" style="--kat-h:315" href="kalkulatory.html#/k/procent-skladany">
           <div class="wyb-tytul">Procent składany</div>
           <div class="wyb-opis">Jak rośnie kapitał przy regularnych wpłatach. Z podatkiem Belki i inflacją.</div>
-          <div class="wyb-kat">Oszczędności</div>
+          <div class="wyb-kat kat-kolor">Oszczędności</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/wymiar-urlopu">
+        <a class="wyb" style="--kat-h:210" href="kalkulatory.html#/k/wymiar-urlopu">
           <div class="wyb-tytul">Wymiar urlopu wypoczynkowego</div>
           <div class="wyb-opis">20 czy 26 dni — z doliczeniem lat nauki i przeliczeniem na niepełny etat.</div>
-          <div class="wyb-kat">Praca i wynagrodzenia</div>
+          <div class="wyb-kat kat-kolor">Praca i wynagrodzenia</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/prognoza-emerytury">
+        <a class="wyb" style="--kat-h:230" href="kalkulatory.html#/k/prognoza-emerytury">
           <div class="wyb-tytul">Prognoza emerytury z ZUS</div>
           <div class="wyb-opis">Ile wyniesie świadczenie przy Twoich zarobkach i stażu — oraz jaka będzie stopa zastąpienia.</div>
-          <div class="wyb-kat">Emerytura i ZUS</div>
+          <div class="wyb-kat kat-kolor">Emerytura i ZUS</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/spalanie-paliwa">
+        <a class="wyb" style="--kat-h:145" href="kalkulatory.html#/k/spalanie-paliwa">
           <div class="wyb-tytul">Spalanie i koszt paliwa</div>
           <div class="wyb-opis">Realne spalanie z przejechanego dystansu i zatankowanych litrów.</div>
-          <div class="wyb-kat">Auto i transport</div>
+          <div class="wyb-kat kat-kolor">Auto i transport</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/statystyki-tekstu">
+        <a class="wyb" style="--kat-h:302" href="kalkulatory.html#/k/statystyki-tekstu">
           <div class="wyb-tytul">Statystyki tekstu — znaki, słowa, zdania</div>
           <div class="wyb-opis">Liczba znaków ze spacjami i bez, słów, zdań, akapitów oraz czas czytania.</div>
-          <div class="wyb-kat">Tekst i pisanie</div>
+          <div class="wyb-kat kat-kolor">Tekst i pisanie</div>
         </a>
-        <a class="wyb" href="kalkulatory.html#/k/rachunek-za-prad">
-          <div class="wyb-tytul">Rachunek za prąd</div>
-          <div class="wyb-opis">Od kilowatogodzin do kwoty na fakturze — z opłatami stałymi i dystrybucją.</div>
-          <div class="wyb-kat">Dom i energia</div>
+        <a class="wyb" style="--kat-h:250" href="kalkulatory.html#/k/bmi">
+          <div class="wyb-tytul">BMI i zakres prawidłowej masy</div>
+          <div class="wyb-opis">Wskaźnik masy ciała z interpretacją i wagą docelową.</div>
+          <div class="wyb-kat kat-kolor">Masa ciała i forma</div>
         </a>
       </div>
     </div>
@@ -703,7 +736,7 @@ details p{margin:0 0 18px; font-size:15px; color:var(--atrament-70); max-width:7
     <div class="srodek">
       <h2>Sprawdź swoją pierwszą kwotę</h2>
       <p>Bez zakładania konta i bez podawania czegokolwiek o sobie. Otwiera się od razu.</p>
-      <a class="btn btn-mocny btn-duzy" href="kalkulatory.html">Otwórz 271 kalkulatorów</a>
+      <a class="btn btn-mocny btn-duzy" href="kalkulatory.html">Otwórz 273 kalkulatorów</a>
     </div>
   </section>
 

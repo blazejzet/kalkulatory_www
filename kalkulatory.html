@@ -150,7 +150,7 @@ button{font:inherit; color:inherit}
 .kalk-naglowek .hero-opis{font-size:14.5px; max-width:62ch}
 .kalk-akcje{display:flex; gap:8px}
 .kalk-uklad{display:grid; grid-template-columns:minmax(0,360px) minmax(0,1fr); gap:26px; align-items:start}
-@media(max-width:1000px){.kalk-uklad{grid-template-columns:1fr}}
+@media(max-width:1000px){.kalk-uklad{grid-template-columns:minmax(0,1fr)}}
 
 .panel-formularza{background:var(--karta); border:1px solid var(--kreska); border-radius:var(--r-duzy); padding:16px 17px}
 .formularz{display:flex; flex-direction:column; gap:13px}
@@ -292,6 +292,9 @@ svg.wykres{display:block; width:100%; height:auto; overflow:visible}
 }
 @media print{
   .bok,.pasek,.pasek-akcji,.stopka,.zaslona{display:none !important}
+  /* Kolor kategorii jest nawigacyjny — na papierze tylko zżera toner. */
+  body.ma-kategorie .prawa{background:none !important; border-left:0 !important}
+  .kafel{background:none !important}
   .tresc{padding:0; max-width:none}
   .kalk-uklad{grid-template-columns:1fr}
   body{background:#fff}
@@ -300,6 +303,13 @@ svg.wykres{display:block; width:100%; height:auto; overflow:visible}
 /* ---------- Listy powtarzalne ---------- */
 .pole-lista{gap:7px}
 .lista-wiersze{display:flex; flex-direction:column; gap:5px}
+/* Listy powtarzalnych wierszy mają kilka kolumn i na najwęższych ekranach
+   nie mieszczą się w szerokości pola. Przewijamy je wewnątrz własnego pudełka,
+   zamiast pozwalać im rozpychać całą stronę. */
+@media(max-width:420px){
+  .lista-wiersze{overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:4px}
+  .lista-naglowek,.lista-wiersz{min-width:296px}
+}
 .lista-naglowek,.lista-wiersz{display:grid; gap:6px; align-items:center}
 .lista-naglowek{font-size:11px; color:var(--atrament-45); letter-spacing:.03em; text-transform:uppercase}
 .lista-naglowek span:last-child,.lista-wiersz > *:last-child{justify-self:end}
@@ -402,6 +412,134 @@ body.narzedzie-pelny-ekran iframe.osadzona{height:calc(100vh - 74px)}
   .druk-strona:last-child{page-break-after:auto}
 }
 
+/* ---------- Kolory kategorii ----------
+   Kategoria niesie w danych jeden odcień (K.CATS[].kolor), ustawiany inline jako
+   --kat-h. Wszystko poniżej wylicza się z niego: tekst, znacznik, delikatne tło
+   i krawędź. Jasność i nasycenie dobiera motyw, więc ta sama liczba czyta się
+   poprawnie na białym i na ciemnym tle. */
+
+/* --- motyw jasny (wartości bazowe) --- */
+.kat-kolor{color:hsl(var(--kat-h,210) 55% 32%)}
+.kat-znacznik{
+  width:8px; height:8px; border-radius:2px; flex:none;
+  background:hsl(var(--kat-h,210) 50% 46%);
+}
+.kat-pasek{
+  width:4px; border-radius:2px; flex:none; align-self:stretch; min-height:20px;
+  background:hsl(var(--kat-h,210) 50% 46%);
+}
+.nav-nazwa{display:flex; align-items:center; gap:9px; min-width:0}
+.sekcja-tytul-box{display:flex; align-items:center; gap:10px}
+/* Nagłówek kategorii oznaczamy samym paskiem przy tytule. Tło i ramka czytały się
+   jak przycisk, a kolor kategorii niesie już tło całej strony. */
+.hero-tytul-box{display:flex; align-items:center; gap:14px; margin-bottom:8px}
+.hero-tytul-box h1{margin:0}
+.hero-tytul-box .kat-pasek{width:5px; min-height:34px; border-radius:3px}
+
+/* Kafel: delikatny wash w odcieniu kategorii plus wyraźna krawędź z lewej. */
+.kafel{
+  background:hsl(var(--kat-h,210) 60% 97.5%);
+  border-left:3px solid hsl(var(--kat-h,210) 45% 72%);
+}
+.kafel:hover{
+  background:hsl(var(--kat-h,210) 62% 95.5%);
+  border-color:var(--kreska-mocna);
+  border-left-color:hsl(var(--kat-h,210) 52% 50%);
+}
+.kafel-kat{color:hsl(var(--kat-h,210) 45% 42%)}
+
+/* Sekcja na stronie startowej: cienka linia pod nagłówkiem w kolorze kategorii. */
+.sekcja-kat .sekcja-gora{
+  border-bottom:2px solid hsl(var(--kat-h,210) 45% 82%);
+  padding-bottom:7px;
+}
+
+/* Otwarty kalkulator albo kategoria maluje całą prawą stronę: delikatne tło
+   i wyraźny pionowy pasek, który oddziela menu od treści. Na wąskim ekranie bok
+   jest nakładką, więc pasek przenosi się na górną belkę. */
+body.ma-kategorie .prawa{
+  background:hsl(var(--kat-h,210) 38% 96%);
+  border-left:5px solid hsl(var(--kat-h,210) 52% 48%);
+}
+body.ma-kategorie .stopka{background:transparent}
+@media(max-width:860px){
+  body.ma-kategorie .prawa{border-left:0}
+  body.ma-kategorie .pasek{
+    background:hsl(var(--kat-h,210) 45% 95%);
+    border-bottom:3px solid hsl(var(--kat-h,210) 52% 48%);
+  }
+}
+
+/* Nawigacja: podświetlenie aktywnej i najechanej kategorii w jej własnym kolorze. */
+.nawigacja a[style*="--kat-h"]:hover{background:hsl(var(--kat-h,210) 55% 95.5%)}
+.nawigacja a[style*="--kat-h"].aktywny{
+  background:hsl(var(--kat-h,210) 52% 93%);
+  color:hsl(var(--kat-h,210) 55% 30%);
+}
+.nawigacja a[style*="--kat-h"].aktywny .kat-znacznik{background:hsl(var(--kat-h,210) 55% 40%)}
+
+/* --- motyw ciemny --- */
+@media (prefers-color-scheme: dark){
+  :root:not([data-motyw="jasny"]) .kat-kolor{color:hsl(var(--kat-h,210) 60% 74%)}
+  :root:not([data-motyw="jasny"]) .kat-znacznik,
+  :root:not([data-motyw="jasny"]) .kat-pasek{background:hsl(var(--kat-h,210) 55% 62%)}
+  :root:not([data-motyw="jasny"]) .kafel{
+    background:hsl(var(--kat-h,210) 26% 13.5%);
+    border-left-color:hsl(var(--kat-h,210) 35% 34%);
+  }
+  :root:not([data-motyw="jasny"]) .kafel:hover{
+    background:hsl(var(--kat-h,210) 28% 16%);
+    border-left-color:hsl(var(--kat-h,210) 55% 58%);
+  }
+  :root:not([data-motyw="jasny"]) .kafel-kat{color:hsl(var(--kat-h,210) 45% 66%)}
+  :root:not([data-motyw="jasny"]) .sekcja-kat .sekcja-gora{border-bottom-color:hsl(var(--kat-h,210) 30% 30%)}
+  :root:not([data-motyw="jasny"]) body.ma-kategorie .prawa{
+    background:hsl(var(--kat-h,210) 22% 10.5%);
+    border-left-color:hsl(var(--kat-h,210) 55% 52%);
+  }
+  :root:not([data-motyw="jasny"]) body.ma-kategorie .pasek{
+    background:hsl(var(--kat-h,210) 26% 14%);
+    border-bottom-color:hsl(var(--kat-h,210) 55% 52%);
+  }
+  :root:not([data-motyw="jasny"]) .nawigacja a[style*="--kat-h"]:hover{background:hsl(var(--kat-h,210) 28% 17%)}
+  :root:not([data-motyw="jasny"]) .nawigacja a[style*="--kat-h"].aktywny{
+    background:hsl(var(--kat-h,210) 32% 21%);
+    color:hsl(var(--kat-h,210) 60% 76%);
+  }
+  :root:not([data-motyw="jasny"]) .nawigacja a[style*="--kat-h"].aktywny .kat-znacznik{
+    background:hsl(var(--kat-h,210) 60% 66%);
+  }
+}
+:root[data-motyw="ciemny"] .kat-kolor{color:hsl(var(--kat-h,210) 60% 74%)}
+:root[data-motyw="ciemny"] .kat-znacznik,
+:root[data-motyw="ciemny"] .kat-pasek{background:hsl(var(--kat-h,210) 55% 62%)}
+:root[data-motyw="ciemny"] .kafel{
+  background:hsl(var(--kat-h,210) 26% 13.5%);
+  border-left-color:hsl(var(--kat-h,210) 35% 34%);
+}
+:root[data-motyw="ciemny"] .kafel:hover{
+  background:hsl(var(--kat-h,210) 28% 16%);
+  border-left-color:hsl(var(--kat-h,210) 55% 58%);
+}
+:root[data-motyw="ciemny"] .kafel-kat{color:hsl(var(--kat-h,210) 45% 66%)}
+:root[data-motyw="ciemny"] .sekcja-kat .sekcja-gora{border-bottom-color:hsl(var(--kat-h,210) 30% 30%)}
+:root[data-motyw="ciemny"] body.ma-kategorie .prawa{
+  background:hsl(var(--kat-h,210) 22% 10.5%);
+  border-left-color:hsl(var(--kat-h,210) 55% 52%);
+}
+:root[data-motyw="ciemny"] body.ma-kategorie .pasek{
+  background:hsl(var(--kat-h,210) 26% 14%);
+  border-bottom-color:hsl(var(--kat-h,210) 55% 52%);
+}
+:root[data-motyw="ciemny"] .nawigacja a[style*="--kat-h"]:hover{background:hsl(var(--kat-h,210) 28% 17%)}
+:root[data-motyw="ciemny"] .nawigacja a[style*="--kat-h"].aktywny{
+  background:hsl(var(--kat-h,210) 32% 21%);
+  color:hsl(var(--kat-h,210) 60% 76%);
+}
+:root[data-motyw="ciemny"] .nawigacja a[style*="--kat-h"].aktywny .kat-znacznik{
+  background:hsl(var(--kat-h,210) 60% 66%);
+}
+
 </style>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23161F2B'/><text x='16' y='23' font-size='19' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'>%C2%B1</text></svg>">
 </head>
@@ -414,27 +552,10 @@ body.narzedzie-pelny-ekran iframe.osadzona{height:calc(100vh - 74px)}
    zbudować do jednego pliku HTML przez tools/build.js. */
 window.K = window.K || {};
 
-K.CATS = [
-  { id:'praca',      name:'Praca i wynagrodzenia', desc:'Etat, zlecenie, dzieło, B2B, urlopy, nadgodziny.' },
-  { id:'podatki',    name:'Podatki',               desc:'PIT, VAT, ryczałt, PCC, spadki i darowizny.' },
-  { id:'firma',      name:'Firma i JDG',           desc:'ZUS przedsiębiorcy, forma opodatkowania, marże, faktury.' },
-  { id:'kredyty',    name:'Kredyty i pożyczki',    desc:'Raty, RRSO, nadpłata, zdolność, leasing.' },
-  { id:'nieruchom',  name:'Nieruchomości',         desc:'Zakup, sprzedaż, koszty transakcyjne, opłacalność.' },
-  { id:'najem',      name:'Najem i rozliczenia',   desc:'Podatek od najmu, media, podział kosztów na lokatorów.' },
-  { id:'oszczedn',   name:'Oszczędności',          desc:'Procent składany, lokaty, obligacje, cele.' },
-  { id:'inwest',     name:'Inwestycje',            desc:'ETF, akcje, dywidendy, portfel, ryzyko.' },
-  { id:'emerytura',  name:'Emerytura i ZUS',       desc:'Prognoza emerytury, IKE, IKZE, PPK, kapitał.' },
-  { id:'rodzina',    name:'Rodzina i świadczenia', desc:'800+, alimenty, zasiłki, koszty dziecka.' },
-  { id:'auto',       name:'Auto i transport',      desc:'Spalanie, koszt trasy, leasing, opony, akcyza.' },
-  { id:'dom',        name:'Dom i energia',         desc:'Prąd, gaz, ogrzewanie, fotowoltaika, woda.' },
-  { id:'budowa',     name:'Budowa i remont',       desc:'Farba, płytki, panele, beton, izolacja.' },
-  { id:'czas',       name:'Czas i daty',           desc:'Dni robocze, terminy, wiek, grafik godzin.' },
-  { id:'codzien',    name:'Codzienne liczenie',    desc:'Rachunek do podziału, rabaty, cena za kg, paczki.' },
-  { id:'zdrowie',    name:'Zdrowie i ciało',       desc:'BMI, zapotrzebowanie, nawodnienie, ciąża.' },
-  { id:'matma',      name:'Matematyka i jednostki',desc:'Procenty, proporcje, przeliczniki, geometria.' },
-  { id:'prawo',      name:'Prawo i urzędy',        desc:'Odsetki, opłaty sądowe, waloryzacja, kary.' },
-  { id:'tekst',      name:'Tekst i pisanie',       desc:'Statystyki tekstu, strony rozliczeniowe, limity znaków.' },
-];
+/* Lista kategorii należy do warstwy językowej — wypełnia ją 09-teksty.js
+   (albo jego odpowiednik w wydaniu en-us). Rejestr sprawdza ją dopiero
+   przy rejestracji kalkulatorów, czyli po wczytaniu całego rdzenia. */
+K.CATS = K.CATS || [];
 
 K.ALL = [];
 K.BY_ID = Object.create(null);
@@ -626,6 +747,8 @@ K.fmt = {
     if (!isFinite(v)) return '—';
     return (Math.abs(v) >= 100000 && Math.abs(v % 1) < 0.005 ? F_MONEY0 : F_MONEY).format(v) + ' zł';
   },
+  /** Kwota bez groszy z symbolem waluty. Wydanie amerykańskie nadpisuje cały ten plik. */
+  zl0: function (v) { return K.fmt.money0(v) + ' zł'; },
   num: function (v, d) { return isFinite(v) ? (d === 3 ? F_NUM3 : _nf(0, d == null ? 2 : d)).format(v) : '—'; },
   int: function (v) { return isFinite(v) ? F_MONEY0.format(Math.round(v)) : '—'; },
   /** 0.1234 → "12,34%" */
@@ -1256,7 +1379,7 @@ Object.assign(K.store, {
     if (dane.aplikacja && dane.aplikacja !== 'kalkulatory-pl')
       throw new Error('Plik pochodzi z innej aplikacji (' + dane.aplikacja + ').');
     if (!Array.isArray(dane.ulubione) && !Array.isArray(dane.historia))
-      throw new Error('Brak sekcji „ulubione” i „historia” — to nie jest kopia danych kalkulatorów.');
+      throw new Error(K.T.daneZlaKopia);
 
     var znane = function (id) { return !!K.BY_ID[id]; };
     var raport = { ulubione: 0, historia: 0, dokumenty: 0, pominieto: 0 };
@@ -1391,8 +1514,6 @@ K.ui.domyslne = function (calc) {
   return v;
 };
 
-var SUFIKSY = { money: 'zł', pct: '%', lata: 'lat', mies: 'mies.', dni: 'dni', m2: 'm²', km: 'km', kwh: 'kWh', h: 'h' };
-
 
 /** Przycisk wykonujący akcję na formularzu — np. pobranie kursu waluty.
     Sama akcja jest podpinana przez formularz, bo potrzebuje dostępu do wartości. */
@@ -1439,7 +1560,7 @@ function poleLista(p, wartosc, onZmiana) {
         }
         return inp;
       }).concat([
-        h('button.ikona-btn.lista-usun', { title: 'Usuń wiersz', onclick: function () {
+        h('button.ikona-btn.lista-usun', { title: K.T.usunWiersz, onclick: function () {
           if (wiersze.length <= (p.min || 1)) return;
           wiersze.splice(idx, 1); onZmiana(wiersze); odswiez();
         } }, '✕'),
@@ -1524,7 +1645,7 @@ function poleWejscia(p, wartosc, onZmiana) {
     input.addEventListener('input', function () {
       onZmiana(input.value === '' ? '' : Number(input.value));
     });
-    var suf = p.suffix !== undefined ? p.suffix : SUFIKSY[typ];
+    var suf = p.suffix !== undefined ? p.suffix : K.T.sufiksy[typ];
     wrap = h('div.we-wrap', [input, suf ? h('span.we-sufiks', suf) : null]);
   }
 
@@ -1592,7 +1713,7 @@ function wartoscTekst(w) {
   if (typeof v !== 'number') return String(v == null ? '—' : v);
   switch (w.f || 'zl') {
     case 'zl': return K.fmt.zl(v);
-    case 'zl0': return K.fmt.money0(v) + ' zł';
+    case 'zl0': return K.fmt.zl0(v);
     case 'pct': return K.fmt.pct(v, w.dec);
     case 'pctRaw': return K.fmt.pctRaw(v, w.dec);
     case 'num': return K.fmt.num(v, w.dec);
@@ -1677,7 +1798,7 @@ K.ui.renderWynik = function (wynik) {
   (wynik.warn || []).forEach(function (t) { box.appendChild(h('div.komunikat.ostrzezenie', t)); });
   if (wynik.notes && wynik.notes.length) {
     box.appendChild(h('div.notki', [
-      h('h4.grupa-tytul', 'Założenia'),
+      h('h4.grupa-tytul', K.T.zalozenia),
       h('ul', wynik.notes.map(function (n) { return h('li', n); })),
     ]));
   }
@@ -1810,7 +1931,7 @@ K.plik = {
       if (!f) return;
       var fr = new FileReader();
       fr.onload = function () { naSukces(fr.result); input.remove(); };
-      fr.onerror = function () { if (naBlad) naBlad('Nie udało się odczytać pliku.'); input.remove(); };
+      fr.onerror = function () { if (naBlad) naBlad(K.T.bladOdczytuPliku); input.remove(); };
       fr.readAsText(f);
     });
     document.body.appendChild(input);
@@ -1822,22 +1943,22 @@ K.plik = {
 K.ui.kartaSynchronizacji = function () {
   var s = K.sync || {};
   var stany = {
-    gotowe: ['ok', 'Zsynchronizowane'],
-    zapisywanie: ['info', 'Zapisywanie…'],
-    pobieranie: ['info', 'Pobieranie zmian…'],
-    lokalnie: ['ostrzezenie', 'Zapis tylko na tym urządzeniu'],
-    blad: ['blad', 'Błąd synchronizacji'],
+    gotowe: ['ok', K.T.syncGotowe],
+    zapisywanie: ['info', K.T.syncZapisywanie],
+    pobieranie: ['info', K.T.syncPobieranie],
+    lokalnie: ['ostrzezenie', K.T.syncLokalnie],
+    blad: ['blad', K.T.syncBlad],
   };
   var st = stany[s.stan] || stany.gotowe;
   return h('div.karta.karta-sync', [
-    h('h3', 'Synchronizacja z iCloud'),
-    h('p.karta-opis', s.opis || 'Dane zapisują się w Twoim iCloud Drive, w folderze aplikacji.'),
+    h('h3', K.T.syncTytul),
+    h('p.karta-opis', s.opis || K.T.syncOpis),
     h('div.komunikat.' + st[0], st[1] + (s.zmodyfikowano
-      ? ' · ostatnio ' + new Date(s.zmodyfikowano).toLocaleString('pl-PL') : '')),
+      ? K.T.syncOstatnio + new Date(s.zmodyfikowano).toLocaleString(K.T.jezyk) : '')),
     h('div.pasek-akcji', [
-      h('button.btn', { onclick: function () { if (K.sync.odswiez) K.sync.odswiez(); } }, 'Odśwież teraz'),
+      h('button.btn', { onclick: function () { if (K.sync.odswiez) K.sync.odswiez(); } }, K.T.syncOdswiez),
       h('button.btn.btn-cichy', { onclick: function () { if (K.sync.pokazWPlikach) K.sync.pokazWPlikach(); } },
-        'Pokaż plik w Plikach'),
+        K.T.syncPokazPlik),
     ]),
   ]);
 };
@@ -1907,7 +2028,7 @@ K.pdf = {
         okno.focus();
         okno.print();
       } catch (e) {
-        if (naBlad) naBlad('Nie udało się otworzyć okna drukowania: ' + e.message);
+        if (naBlad) naBlad(K.T.bladOknaDruku(e.message));
       }
       // Ramkę usuwamy dopiero po zamknięciu okna drukowania — inaczej
       // przeglądarka nie ma czego wydrukować.
@@ -1936,11 +2057,7 @@ K.app = {
 
 /* ---------------- Wyszukiwarka ---------------- */
 
-function bezOgonkow(s) {
-  return String(s || '').toLowerCase()
-    .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
-    .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/[żź]/g, 'z');
-}
+function bezOgonkow(s) { return K.T.normalizuj(s); }
 K.bezOgonkow = bezOgonkow;
 
 function indeksuj(c) {
@@ -1966,31 +2083,55 @@ K.szukaj = function (fraza) {
     }
     return { c: c, punkty: punkty };
   }).filter(Boolean)
-    .sort(function (a, b) { return b.punkty - a.punkty || a.c.name.localeCompare(b.c.name, 'pl'); })
+    .sort(function (a, b) { return b.punkty - a.punkty || a.c.name.localeCompare(b.c.name, K.T.jezyk); })
     .map(function (x) { return x.c; });
 };
 
 /* ---------------- Kafelki ---------------- */
 
+/** Maluje całą stronę kolorem otwartej kategorii — tło treści i pasek przy menu.
+    Poza widokiem kalkulatora i kategorii odcień znika, żeby strona startowa
+    i widoki systemowe zostały neutralne. */
+var kategoriaAktywna = null;
+
+function ustawKolorStrony(idKategorii) {
+  var kat = idKategorii ? K.cat(idKategorii) : null;
+  kategoriaAktywna = kat ? kat.id : null;
+  if (kat && kat.kolor != null) {
+    document.body.style.setProperty('--kat-h', kat.kolor);
+    document.body.classList.add('ma-kategorie');
+  } else {
+    document.body.style.removeProperty('--kat-h');
+    document.body.classList.remove('ma-kategorie');
+  }
+}
+
+/** Ustawia odcień kategorii na elemencie; CSS dobiera resztę pod motyw. */
+function kolorKategorii(el, idKategorii) {
+  var kat = K.cat(idKategorii);
+  if (kat && kat.kolor != null) el.style.setProperty('--kat-h', kat.kolor);
+  return el;
+}
+
 function kafelek(c) {
   var ulub = K.store.czyUlubiony(c.id);
   var gwiazdka = h('button.gwiazdka' + (ulub ? '.on' : ''), {
-    title: ulub ? 'Usuń z ulubionych' : 'Dodaj do ulubionych',
-    'aria-label': 'Ulubione', onclick: function (e) {
+    title: ulub ? K.T.usunZUlubionych : K.T.dodajDoUlubionych,
+    'aria-label': K.T.ulubione, onclick: function (e) {
       e.preventDefault(); e.stopPropagation();
       var teraz = K.store.przelaczUlubiony(c.id);
       gwiazdka.classList.toggle('on', teraz);
     },
   }, ulub ? '★' : '☆');
-  return h('a.kafel', { href: '#/k/' + c.id }, [
+  return kolorKategorii(h('a.kafel', { href: '#/' + K.T.trasy.kalk + '/' + c.id }, [
     h('div.kafel-gora', [h('h3.kafel-tytul', c.name), gwiazdka]),
     c.desc ? h('p.kafel-opis', c.desc) : null,
-    h('span.kafel-kat', (K.cat(c.cat) || {}).name),
-  ]);
+    h('span.kafel-kat.kat-kolor', (K.cat(c.cat) || {}).name),
+  ]), c.cat);
 }
 
 function siatka(lista, pustyTekst) {
-  if (!lista.length) return h('p.pusto', pustyTekst || 'Nic tu jeszcze nie ma.');
+  if (!lista.length) return h('p.pusto', pustyTekst || K.T.pustoDomyslnie);
   return h('div.siatka-kafli', lista.map(kafelek));
 }
 
@@ -2001,15 +2142,13 @@ function widokStart() {
   var ulub = K.store.ulubione().map(function (id) { return K.BY_ID[id]; }).filter(Boolean);
 
   box.appendChild(h('section.hero', [
-    h('h1', 'Kalkulatory'),
-    h('p.hero-opis', K.ALL.length + ' kalkulatorów na polskich przepisach i stawkach ' + K.ROK +
-      '. Wszystko liczy się na Twoim urządzeniu. Jedyne połączenie z siecią to pobranie ' +
-      'kursu waluty z API NBP — i tylko wtedy, gdy sam o to poprosisz.'),
+    h('h1', K.T.startTytul),
+    h('p.hero-opis', K.T.startOpis(K.ALL.length, K.ROK)),
   ]));
 
   if (ulub.length) {
     box.appendChild(h('section.sekcja', [
-      h('h2.sekcja-tytul', 'Ulubione'),
+      h('h2.sekcja-tytul', K.T.ulubione),
       siatka(ulub),
     ]));
   }
@@ -2017,7 +2156,7 @@ function widokStart() {
   var hist = K.store.historia().slice(0, 4);
   if (hist.length) {
     box.appendChild(h('section.sekcja', [
-      h('h2.sekcja-tytul', 'Ostatnie obliczenia'),
+      h('h2.sekcja-tytul', K.T.ostatnieObliczenia),
       h('div.historia-lista', hist.map(wpisHistorii)),
     ]));
   }
@@ -2025,14 +2164,14 @@ function widokStart() {
   K.CATS.forEach(function (kat) {
     var lista = K.inCat(kat.id);
     if (!lista.length) return;
-    box.appendChild(h('section.sekcja', [
+    box.appendChild(kolorKategorii(h('section.sekcja.sekcja-kat', [
       h('div.sekcja-gora', [
-        h('h2.sekcja-tytul', kat.name),
-        h('span.sekcja-licznik', lista.length + ' ' + K.fmt.odmiana(lista.length, 'kalkulator', 'kalkulatory', 'kalkulatorów')),
+        h('div.sekcja-tytul-box', [h('span.kat-pasek'), h('h2.sekcja-tytul', kat.name)]),
+        h('span.sekcja-licznik', K.T.ileKalkulatorow(lista.length)),
       ]),
       h('p.sekcja-opis', kat.desc),
       siatka(lista),
-    ]));
+    ]), kat.id));
   });
   return box;
 }
@@ -2043,10 +2182,8 @@ function widokSzukaj(fraza) {
   wyniki.forEach(function (c) { (wgKat[c.cat] = wgKat[c.cat] || []).push(c); });
   var box = h('div', [
     h('section.hero', [
-      h('h1', 'Wyniki dla „' + fraza + '”'),
-      h('p.hero-opis', wyniki.length
-        ? 'Znaleziono ' + wyniki.length + ' ' + K.fmt.odmiana(wyniki.length, 'kalkulator', 'kalkulatory', 'kalkulatorów') + '.'
-        : 'Nic nie pasuje do tej frazy. Spróbuj innego słowa albo przejrzyj kategorie.'),
+      h('h1', K.T.wynikiDla(fraza)),
+      h('p.hero-opis', wyniki.length ? K.T.znaleziono(wyniki.length) : K.T.nicNiePasuje),
     ]),
   ]);
   K.CATS.forEach(function (kat) {
@@ -2061,9 +2198,12 @@ function widokSzukaj(fraza) {
 
 function widokKategoria(id) {
   var kat = K.cat(id);
-  if (!kat) return h('p.pusto', 'Nie ma takiej kategorii.');
+  if (!kat) return h('p.pusto', K.T.brakKategorii);
   return h('div', [
-    h('section.hero', [h('h1', kat.name), h('p.hero-opis', kat.desc)]),
+    kolorKategorii(h('section.hero', [
+      h('div.hero-tytul-box', [h('span.kat-pasek'), h('h1', kat.name)]),
+      h('p.hero-opis', kat.desc),
+    ]), kat.id),
     siatka(K.inCat(id)),
   ]);
 }
@@ -2072,48 +2212,47 @@ function wpisHistorii(w) {
   var c = K.BY_ID[w.calcId];
   return h('div.hist-wpis', [
     h('div.hist-tresc', [
-      h('a.hist-nazwa', { href: '#/k/' + w.calcId, onclick: function () { K.app.wczytajZHistorii = w; } },
+      h('a.hist-nazwa', { href: '#/' + K.T.trasy.kalk + '/' + w.calcId, onclick: function () { K.app.wczytajZHistorii = w; } },
         (c ? c.name : w.nazwa)),
       h('div.hist-skrot', w.skrot || ''),
-      h('div.hist-data', new Date(w.ts).toLocaleString('pl-PL')),
+      h('div.hist-data', new Date(w.ts).toLocaleString(K.T.jezyk)),
     ]),
-    h('button.ikona-btn', { title: 'Usuń wpis', onclick: function () { K.store.usunZHistorii(w.id); K.render(); } }, '✕'),
+    h('button.ikona-btn', { title: K.T.usunWpis, onclick: function () { K.store.usunZHistorii(w.id); K.render(); } }, '✕'),
   ]);
 }
 
 function widokUlubione() {
   var lista = K.store.ulubione().map(function (id) { return K.BY_ID[id]; }).filter(Boolean);
   return h('div', [
-    h('section.hero', [h('h1', 'Ulubione'),
-      h('p.hero-opis', 'Kalkulatory oznaczone gwiazdką. Zapisane w tej przeglądarce.')]),
-    siatka(lista, 'Nie masz jeszcze ulubionych. Kliknij ☆ przy dowolnym kalkulatorze.'),
+    h('section.hero', [h('h1', K.T.ulubione),
+      h('p.hero-opis', K.T.ulubioneOpis)]),
+    siatka(lista, K.T.brakUlubionych),
   ]);
 }
 
 function widokHistoria() {
   var hist = K.store.historia();
   return h('div', [
-    h('section.hero', [h('h1', 'Historia obliczeń'),
-      h('p.hero-opis', 'Zapisane wyniki. Kliknij nazwę, aby wrócić do kalkulatora z tymi samymi danymi.')]),
+    h('section.hero', [h('h1', K.T.historiaTytul),
+      h('p.hero-opis', K.T.historiaOpis)]),
     hist.length ? h('div.pasek-akcji', [
       h('button.btn.btn-cichy', { onclick: function () {
-        if (confirm('Usunąć całą historię obliczeń?')) { K.store.wyczyscHistorie(); K.render(); }
-      } }, 'Wyczyść historię'),
+        if (confirm(K.T.historiaPotwierdz)) { K.store.wyczyscHistorie(); K.render(); }
+      } }, K.T.wyczyscHistorie),
     ]) : null,
     hist.length ? h('div.historia-lista', hist.map(wpisHistorii))
-      : h('p.pusto', 'Historia jest pusta. W kalkulatorze kliknij „Zapisz obliczenie”.'),
+      : h('p.pusto', K.T.historiaPusta),
   ]);
 }
 
 function widokParametry() {
   return h('div', [
-    h('section.hero', [h('h1', 'Parametry ' + K.ROK),
-      h('p.hero-opis', 'Wszystkie stawki i limity użyte w obliczeniach. Stan na ' + K.AKTUALIZACJA + '.')]),
+    h('section.hero', [h('h1', K.T.parametryTytul(K.ROK)),
+      h('p.hero-opis', K.T.parametryOpis(K.AKTUALIZACJA))]),
     h('div.parametry', K.PARAM_DOC.map(function (p) {
       return h('div.param', [h('h3', p[0]), h('p', p[1])]);
     })),
-    h('div.komunikat.info', 'Kalkulatory mają charakter informacyjny i nie zastępują porady księgowego ' +
-      'ani doradcy podatkowego. Przepisy zmieniają się w trakcie roku — przy ważnych decyzjach zweryfikuj wynik.'),
+    h('div.komunikat.info', K.T.parametryZastrzezenie),
   ]);
 }
 
@@ -2122,19 +2261,17 @@ function widokDane() {
 
   function pobierz() {
     var dane = K.store.eksport();
-    K.plik.zapisz('kalkulatory-' + new Date().toISOString().slice(0, 10) + '.json',
+    K.plik.zapisz(K.T.daneNazwaPliku + new Date().toISOString().slice(0, 10) + '.json',
       JSON.stringify(dane, null, 2));
   }
 
   function wczytaj(tresc) {
     try {
       var raport = K.store.import(JSON.parse(tresc), K.app.trybImportu || 'scal');
-      K.ui.pusty(status).appendChild(h('div.komunikat.ok',
-        'Zaimportowano: ' + raport.ulubione + ' ulubionych, ' + raport.historia + ' wpisów historii' +
-        (raport.pominieto ? ' (pominięto ' + raport.pominieto + ' nieznanych pozycji)' : '') + '.'));
+      K.ui.pusty(status).appendChild(h('div.komunikat.ok', K.T.daneZaimportowano(raport)));
       K.render();
     } catch (e) {
-      K.ui.pusty(status).appendChild(h('div.komunikat.blad', 'Nie udało się wczytać: ' + e.message));
+      K.ui.pusty(status).appendChild(h('div.komunikat.blad', K.T.daneBladWczytania(e.message)));
     }
   }
 
@@ -2147,49 +2284,45 @@ function widokDane() {
   });
 
   var wybor = h('select.we-select', [
-    h('option', { value: 'scal' }, 'Dołącz do istniejących danych'),
-    h('option', { value: 'zastap' }, 'Zastąp istniejące dane'),
+    h('option', { value: 'scal' }, K.T.daneDolacz),
+    h('option', { value: 'zastap' }, K.T.daneZastap),
   ]);
   wybor.addEventListener('change', function () { K.app.trybImportu = wybor.value; });
 
   var u = K.store.ulubione().length, hi = K.store.historia().length;
   return h('div', [
-    h('section.hero', [h('h1', 'Twoje dane'),
-      h('p.hero-opis', K.sync && K.sync.dostepny
-        ? 'Ulubione, historia i ostatnie wartości zapisują się w Twoim iCloud Drive ' +
-          'i są dostępne na każdym Twoim urządzeniu.'
-        : 'Ulubione i historia trzymane są wyłącznie w pamięci tej przeglądarki. ' +
-          'Zrób kopię, żeby przenieść je na inne urządzenie.')]),
+    h('section.hero', [h('h1', K.T.twojeDane),
+      h('p.hero-opis', K.sync && K.sync.dostepny ? K.T.daneOpisSync : K.T.daneOpisLokalne)]),
     K.sync && K.sync.dostepny ? K.ui.kartaSynchronizacji() : null,
     h('div.karta', [
-      h('h3', 'Stan'),
+      h('h3', K.T.daneStan),
       K.ui.renderWynik({ rows: [
-        { label: 'Ulubione kalkulatory', value: u, f: 'int' },
-        { label: 'Zapisane obliczenia', value: hi, f: 'int' },
-        { label: 'Dostępne kalkulatory', value: K.ALL.length, f: 'int' },
+        { label: K.T.daneUlubione, value: u, f: 'int' },
+        { label: K.T.daneObliczenia, value: hi, f: 'int' },
+        { label: K.T.daneDostepne, value: K.ALL.length, f: 'int' },
       ] }),
     ]),
     h('div.karta', [
-      h('h3', 'Kopia zapasowa'),
-      h('p.karta-opis', 'Plik JSON z ulubionymi, historią i ostatnio wpisanymi wartościami.'),
-      h('div.pasek-akcji', [h('button.btn.btn-mocny', { onclick: pobierz }, 'Eksportuj do JSON')]),
+      h('h3', K.T.daneKopia),
+      h('p.karta-opis', K.T.daneKopiaOpis),
+      h('div.pasek-akcji', [h('button.btn.btn-mocny', { onclick: pobierz }, K.T.daneEksport)]),
     ]),
     h('div.karta', [
-      h('h3', 'Wczytaj kopię'),
-      h('p.karta-opis', 'Wskaż plik JSON wyeksportowany wcześniej z tej aplikacji.'),
+      h('h3', K.T.daneWczytaj),
+      h('p.karta-opis', K.T.daneWczytajOpis),
       h('div.pasek-akcji', [wybor, h('button.btn', { onclick: function () {
         K.plik.wczytaj(wczytaj, function (blad) {
           K.ui.pusty(status).appendChild(h('div.komunikat.blad', blad));
         });
-      } }, 'Wybierz plik…')]),
+      } }, K.T.daneWybierzPlik)]),
       plik, status,
     ]),
     h('div.karta', [
-      h('h3', 'Usuwanie'),
-      h('p.karta-opis', 'Kasuje ulubione, historię i zapamiętane wartości z tej przeglądarki.'),
+      h('h3', K.T.daneUsuwanie),
+      h('p.karta-opis', K.T.daneUsuwanieOpis),
       h('div.pasek-akcji', [h('button.btn.btn-groznny', { onclick: function () {
-        if (confirm('Usunąć wszystkie zapisane dane? Tej operacji nie da się cofnąć.')) { K.store.wyczyscWszystko(); K.render(); }
-      } }, 'Usuń wszystkie dane')]),
+        if (confirm(K.T.daneUsunPotwierdz)) { K.store.wyczyscWszystko(); K.render(); }
+      } }, K.T.daneUsunWszystko)]),
     ]),
   ]);
 }
@@ -2198,7 +2331,7 @@ function widokDane() {
 
 function widokStronyOsadzonej(c) {
   var tresc = K.STRONY[c.strona];
-  if (!tresc) return h('p.pusto', 'Nie udało się wczytać narzędzia „' + c.name + '”.');
+  if (!tresc) return h('p.pusto', K.T.bladNarzedzia(c.name));
 
   var ramka = h('iframe.osadzona', {
     title: c.name, srcdoc: tresc, loading: 'eager',
@@ -2212,8 +2345,8 @@ function widokStronyOsadzonej(c) {
   var btnPelny = h('button.btn', { onclick: function () {
     pelnyEkran = !pelnyEkran;
     document.body.classList.toggle('narzedzie-pelny-ekran', pelnyEkran);
-    btnPelny.textContent = pelnyEkran ? 'Zmniejsz' : 'Pełne okno';
-  } }, 'Pełne okno');
+    btnPelny.textContent = pelnyEkran ? K.T.zmniejsz : K.T.pelneOkno;
+  } }, K.T.pelneOkno);
 
   if (c.dokumenty) pasekDok = pasekDokumentow(c, wartosci, przebuduj);
 
@@ -2221,37 +2354,38 @@ function widokStronyOsadzonej(c) {
   var btnUlub = h('button.btn.btn-gwiazdka' + (ulub ? '.on' : ''), { onclick: function () {
     var t = K.store.przelaczUlubiony(c.id);
     btnUlub.classList.toggle('on', t);
-    btnUlub.textContent = (t ? '★' : '☆') + ' Ulubiony';
-  } }, (ulub ? '★' : '☆') + ' Ulubiony');
+    btnUlub.textContent = (t ? '★' : '☆') + ' ' + K.T.ulubionyBtn;
+  } }, (ulub ? '★' : '☆') + ' ' + K.T.ulubionyBtn);
 
   var btnPDF = c.wydruk ? h('button.btn', { onclick: function () {
     var tytul = (c.nazwaDokumentu ? c.nazwaDokumentu(wartosci) : '') || c.name;
-    var nazwaPliku = (tytul || 'dokument')
-      .replace(/[^\wąćęłńóśżźĄĆĘŁŃÓŚŻŹ .·-]+/g, '').replace(/[ ·]+/g, '-').slice(0, 60) + '.pdf';
+    var nazwaPliku = (tytul || K.T.domyslnaNazwaDokumentu)
+      .replace(K.T.dozwoloneWNazwie, '').replace(/[ ·]+/g, '-').slice(0, 60) + '.pdf';
     var tresc = '';
     try { tresc = c.wydruk(wartosci, ostatniWynik || przelicz(), K.P); }
-    catch (e) { window.alert('Nie udało się złożyć dokumentu: ' + e.message); return; }
+    catch (e) { window.alert(K.T.bladDokumentu(e.message)); return; }
 
     btnPDF.disabled = true;
-    btnPDF.textContent = 'Przygotowywanie…';
+    btnPDF.textContent = K.T.przygotowywanie;
     K.pdf.eksportuj(nazwaPliku, tytul, tresc, function (blad) { window.alert(blad); });
     setTimeout(function () {
       btnPDF.disabled = false;
-      btnPDF.textContent = 'Eksportuj PDF';
+      btnPDF.textContent = K.T.eksportujPDF;
     }, 1200);
-  } }, 'Eksportuj PDF') : null;
+  } }, K.T.eksportujPDF) : null;
 
   var podglad = false;
   var btnPodglad = c.wydruk ? h('button.btn.btn-cichy', { onclick: function () {
     podglad = !podglad;
     strona.classList.toggle('pokaz-druk', podglad);
-    btnPodglad.textContent = podglad ? 'Ukryj druk' : 'Podgląd druku';
-  } }, 'Podgląd druku') : null;
+    btnPodglad.textContent = podglad ? K.T.ukryjDruk : K.T.podgladDruku;
+  } }, K.T.podgladDruku) : null;
 
   return h('div.strona-narzedzia', [
     h('div.okruszki', [
-      h('a', { href: '#/' }, 'Start'), h('span', ' / '),
-      h('a', { href: '#/kat/' + c.cat }, (K.cat(c.cat) || {}).name),
+      h('a', { href: '#/' }, K.T.start), h('span', ' / '),
+      kolorKategorii(h('a.kat-kolor', { href: '#/' + K.T.trasy.kat + '/' + c.cat },
+        (K.cat(c.cat) || {}).name), c.cat),
     ]),
     h('div.kalk-naglowek', [
       h('div', [h('h1', c.name), c.desc ? h('p.hero-opis', c.desc) : null]),
@@ -2270,7 +2404,7 @@ function pasekDokumentow(c, wartosci, przebuduj) {
   var otwarty = { id: null, nazwa: '' };
   var czekaZapis = null;
 
-  var wybor = h('select.we-select.dok-wybor', { 'aria-label': 'Zapisane dokumenty' });
+  var wybor = h('select.we-select.dok-wybor', { 'aria-label': K.T.dokAria });
   var stan = h('span.dok-stan');
 
   function pokazStan(tekst, rodzajKom) {
@@ -2283,14 +2417,14 @@ function pasekDokumentow(c, wartosci, przebuduj) {
     }
   }
   function opis() {
-    return otwarty.id ? 'Otwarty: ' + otwarty.nazwa : 'Niezapisany — kliknij „Zapisz”';
+    return otwarty.id ? K.T.dokOtwarty(otwarty.nazwa) : K.T.dokNiezapisany;
   }
 
   function odswiezListe() {
     var lista = K.store.dokumenty(rodzaj);
     K.ui.pusty(wybor);
     wybor.appendChild(h('option', { value: '' },
-      lista.length ? '— zapisane dokumenty —' : '— brak zapisanych —'));
+      lista.length ? K.T.dokListaPelna : K.T.dokListaPusta));
     lista.forEach(function (d) {
       var o = h('option', { value: d.id }, d.nazwa);
       if (d.id === otwarty.id) o.selected = true;
@@ -2310,7 +2444,7 @@ function pasekDokumentow(c, wartosci, przebuduj) {
     });
     otwarty = { id: zapis.id, nazwa: zapis.nazwa };
     odswiezListe();
-    pokazStan('Zapisano', 'ok');
+    pokazStan(K.T.dokZapisano, 'ok');
   }
 
   // Otwarty dokument zapisuje się sam po zmianach w formularzu.
@@ -2323,7 +2457,7 @@ function pasekDokumentow(c, wartosci, przebuduj) {
   wybor.addEventListener('change', function () {
     if (!wybor.value) return;
     var dok = K.store.wczytajDokument(rodzaj, wybor.value);
-    if (!dok) { pokazStan('Nie znaleziono dokumentu.', 'blad'); return; }
+    if (!dok) { pokazStan(K.T.dokNieZnaleziono, 'blad'); return; }
     otwarty = { id: dok.id, nazwa: dok.nazwa };
     var domyslne = K.ui.domyslne(c);
     Object.keys(domyslne).forEach(function (k) {
@@ -2331,34 +2465,34 @@ function pasekDokumentow(c, wartosci, przebuduj) {
     });
     przebuduj();
     odswiezListe();
-    pokazStan('Wczytano: ' + dok.nazwa, 'ok');
+    pokazStan(K.T.dokWczytano(dok.nazwa), 'ok');
   });
 
   var pasek = h('div.pasek-dokumentow', [
-    h('span.dok-etykieta', 'Zapisane'),
+    h('span.dok-etykieta', K.T.dokEtykieta),
     wybor,
-    h('button.btn.btn-mocny', { onclick: function () { zapisz(null); } }, 'Zapisz'),
+    h('button.btn.btn-mocny', { onclick: function () { zapisz(null); } }, K.T.dokZapisz),
     h('button.btn', { onclick: function () {
-      var nazwa = window.prompt('Nazwa dokumentu:', nazwaDomyslna());
+      var nazwa = window.prompt(K.T.dokNazwaPrompt, nazwaDomyslna());
       if (nazwa && nazwa.trim()) zapisz(nazwa.trim());
-    } }, 'Zapisz jako…'),
+    } }, K.T.dokZapiszJako),
     h('button.btn', { onclick: function () {
-      if (otwarty.id && !window.confirm('Zacząć nowy dokument? Otwarty pozostanie zapisany.')) return;
+      if (otwarty.id && !window.confirm(K.T.dokNowyPotwierdz)) return;
       otwarty = { id: null, nazwa: '' };
       var domyslne = K.ui.domyslne(c);
       Object.keys(domyslne).forEach(function (k) { wartosci[k] = domyslne[k]; });
       przebuduj();
       odswiezListe();
       pokazStan(opis(), '');
-    } }, 'Nowy'),
+    } }, K.T.dokNowy),
     h('button.btn.btn-cichy', { onclick: function () {
-      if (!otwarty.id) { pokazStan('Ten dokument nie jest jeszcze zapisany.', 'blad'); return; }
-      if (!window.confirm('Usunąć „' + otwarty.nazwa + '”?')) return;
+      if (!otwarty.id) { pokazStan(K.T.dokNiezapisanyBlad, 'blad'); return; }
+      if (!window.confirm(K.T.dokUsunPotwierdz(otwarty.nazwa))) return;
       K.store.usunDokument(rodzaj, otwarty.id);
       otwarty = { id: null, nazwa: '' };
       odswiezListe();
-      pokazStan('Usunięto', 'ok');
-    } }, 'Usuń'),
+      pokazStan(K.T.dokUsunieto, 'ok');
+    } }, K.T.dokUsun),
     stan,
   ]);
 
@@ -2370,7 +2504,7 @@ function pasekDokumentow(c, wartosci, przebuduj) {
 
 function widokKalkulator(id) {
   var c = K.BY_ID[id];
-  if (!c) return h('p.pusto', 'Nie znaleziono kalkulatora.');
+  if (!c) return h('p.pusto', K.T.brakKalkulatora);
   if (c.typ === 'strona') return widokStronyOsadzonej(c);
 
   var wartosci;
@@ -2391,14 +2525,14 @@ function widokKalkulator(id) {
   function przelicz() {
     var wynik;
     try { wynik = c.compute(wartosci, K.P); }
-    catch (e) { wynik = { blad: 'Błąd obliczeń: ' + e.message }; console.error(e); }
+    catch (e) { wynik = { blad: K.T.bladObliczen(e.message) }; console.error(e); }
     ostatniWynik = wynik;
     K.ui.pusty(panelWynikow).appendChild(K.ui.renderWynik(wynik));
 
     if (panelWydruku) {
       var druk = h('div.druk');
       try { druk.innerHTML = c.wydruk(wartosci, wynik, K.P); }
-      catch (e) { druk.textContent = 'Nie udało się złożyć druku: ' + e.message; }
+      catch (e) { druk.textContent = K.T.bladDruku(e.message); }
       K.ui.pusty(panelWydruku).appendChild(druk);
     }
 
@@ -2420,32 +2554,32 @@ function widokKalkulator(id) {
   var btnUlub = h('button.btn.btn-gwiazdka' + (ulub ? '.on' : ''), { onclick: function () {
     var t = K.store.przelaczUlubiony(c.id);
     btnUlub.classList.toggle('on', t);
-    btnUlub.textContent = (t ? '★' : '☆') + ' Ulubiony';
-  } }, (ulub ? '★' : '☆') + ' Ulubiony');
+    btnUlub.textContent = (t ? '★' : '☆') + ' ' + K.T.ulubionyBtn;
+  } }, (ulub ? '★' : '☆') + ' ' + K.T.ulubionyBtn);
 
   var btnPDF = c.wydruk ? h('button.btn', { onclick: function () {
     var tytul = (c.nazwaDokumentu ? c.nazwaDokumentu(wartosci) : '') || c.name;
-    var nazwaPliku = (tytul || 'dokument')
-      .replace(/[^\wąćęłńóśżźĄĆĘŁŃÓŚŻŹ .·-]+/g, '').replace(/[ ·]+/g, '-').slice(0, 60) + '.pdf';
+    var nazwaPliku = (tytul || K.T.domyslnaNazwaDokumentu)
+      .replace(K.T.dozwoloneWNazwie, '').replace(/[ ·]+/g, '-').slice(0, 60) + '.pdf';
     var tresc = '';
     try { tresc = c.wydruk(wartosci, ostatniWynik || przelicz(), K.P); }
-    catch (e) { window.alert('Nie udało się złożyć dokumentu: ' + e.message); return; }
+    catch (e) { window.alert(K.T.bladDokumentu(e.message)); return; }
 
     btnPDF.disabled = true;
-    btnPDF.textContent = 'Przygotowywanie…';
+    btnPDF.textContent = K.T.przygotowywanie;
     K.pdf.eksportuj(nazwaPliku, tytul, tresc, function (blad) { window.alert(blad); });
     setTimeout(function () {
       btnPDF.disabled = false;
-      btnPDF.textContent = 'Eksportuj PDF';
+      btnPDF.textContent = K.T.eksportujPDF;
     }, 1200);
-  } }, 'Eksportuj PDF') : null;
+  } }, K.T.eksportujPDF) : null;
 
   var podglad = false;
   var btnPodglad = c.wydruk ? h('button.btn.btn-cichy', { onclick: function () {
     podglad = !podglad;
     strona.classList.toggle('pokaz-druk', podglad);
-    btnPodglad.textContent = podglad ? 'Ukryj druk' : 'Podgląd druku';
-  } }, 'Podgląd druku') : null;
+    btnPodglad.textContent = podglad ? K.T.ukryjDruk : K.T.podgladDruku;
+  } }, K.T.podgladDruku) : null;
 
   var btnZapisz = h('button.btn.btn-mocny', { onclick: function () {
     var w = ostatniWynik || przelicz();
@@ -2455,20 +2589,21 @@ function widokKalkulator(id) {
       wartosci: JSON.parse(JSON.stringify(wartosci)),
       skrot: glowne ? glowne.label + ': ' + K.ui.wartoscTekst(glowne) : '',
     });
-    btnZapisz.textContent = 'Zapisano ✓';
-    setTimeout(function () { btnZapisz.textContent = 'Zapisz obliczenie'; }, 1600);
-  } }, 'Zapisz obliczenie');
+    btnZapisz.textContent = K.T.zapisanoPtaszek;
+    setTimeout(function () { btnZapisz.textContent = K.T.zapiszObliczenie; }, 1600);
+  } }, K.T.zapiszObliczenie);
 
   var btnReset = h('button.btn.btn-cichy', { onclick: function () {
     var d = K.ui.domyslne(c);
     Object.keys(d).forEach(function (k) { wartosci[k] = d[k]; });
     przebuduj();
-  } }, 'Wartości domyślne');
+  } }, K.T.wartosciDomyslne);
 
   var strona = h('div.strona-kalkulatora', [
     h('div.okruszki', [
-      h('a', { href: '#/' }, 'Start'), h('span', ' / '),
-      h('a', { href: '#/kat/' + c.cat }, (K.cat(c.cat) || {}).name),
+      h('a', { href: '#/' }, K.T.start), h('span', ' / '),
+      kolorKategorii(h('a.kat-kolor', { href: '#/' + K.T.trasy.kat + '/' + c.cat },
+        (K.cat(c.cat) || {}).name), c.cat),
     ]),
     h('div.kalk-naglowek', [
       h('div', [h('h1', c.name), c.desc ? h('p.hero-opis', c.desc) : null]),
@@ -2489,7 +2624,7 @@ function widokKalkulator(id) {
   var powiazane = K.inCat(c.cat).filter(function (x) { return x.id !== c.id; }).slice(0, 6);
   if (powiazane.length) {
     strona.appendChild(h('section.sekcja', [
-      h('h2.sekcja-tytul', 'Podobne kalkulatory'), siatka(powiazane),
+      h('h2.sekcja-tytul', K.T.podobneKalkulatory), siatka(powiazane),
     ]));
   }
   return strona;
@@ -2502,14 +2637,20 @@ K.render = function () {
   var czesci = hash.split('/').filter(Boolean);
   var widok;
 
-  if (czesci[0] === 'k' && czesci[1]) widok = widokKalkulator(decodeURIComponent(czesci[1]));
-  else if (czesci[0] === 'kat' && czesci[1]) widok = widokKategoria(czesci[1]);
-  else if (czesci[0] === 'szukaj' && czesci[1]) widok = widokSzukaj(decodeURIComponent(czesci.slice(1).join('/')));
-  else if (czesci[0] === 'ulubione') widok = widokUlubione();
-  else if (czesci[0] === 'historia') widok = widokHistoria();
-  else if (czesci[0] === 'parametry') widok = widokParametry();
-  else if (czesci[0] === 'dane') widok = widokDane();
+  var R = K.T.trasy;
+  if (czesci[0] === R.kalk && czesci[1]) widok = widokKalkulator(decodeURIComponent(czesci[1]));
+  else if (czesci[0] === R.kat && czesci[1]) widok = widokKategoria(czesci[1]);
+  else if (czesci[0] === R.szukaj && czesci[1]) widok = widokSzukaj(decodeURIComponent(czesci.slice(1).join('/')));
+  else if (czesci[0] === R.ulubione) widok = widokUlubione();
+  else if (czesci[0] === R.historia) widok = widokHistoria();
+  else if (czesci[0] === R.parametry) widok = widokParametry();
+  else if (czesci[0] === R.dane) widok = widokDane();
   else widok = widokStart();
+
+  ustawKolorStrony(
+    czesci[0] === R.kalk && czesci[1] ? (K.BY_ID[decodeURIComponent(czesci[1])] || {}).cat
+      : (czesci[0] === R.kat && czesci[1] ? czesci[1] : null)
+  );
 
   document.body.classList.remove('narzedzie-pelny-ekran');
   var main = K.app.el.main;
@@ -2520,10 +2661,14 @@ K.render = function () {
 };
 
 function odswiezNawigacje(hash) {
+  // Otwarty kalkulator podświetla swoją kategorię, żeby menu zgadzało się
+  // z kolorem strony — inaczej pasek mówi, gdzie jesteś, a nawigacja nie.
+  var trasaKategorii = kategoriaAktywna ? '/' + K.T.trasy.kat + '/' + kategoriaAktywna : null;
   var linki = document.querySelectorAll('.nawigacja a');
   for (var i = 0; i < linki.length; i++) {
     var a = linki[i], cel = a.getAttribute('href').replace(/^#/, '');
-    a.classList.toggle('aktywny', cel === hash || (cel !== '/' && hash.indexOf(cel) === 0));
+    a.classList.toggle('aktywny', cel === hash || cel === trasaKategorii ||
+      (cel !== '/' && hash.indexOf(cel) === 0));
   }
   var l = document.querySelector('.licznik-ulubionych');
   if (l) l.textContent = K.store.ulubione().length || '';
@@ -2532,8 +2677,8 @@ function odswiezNawigacje(hash) {
 /* ---------------- Nawigacja i szukajka ---------------- */
 
 function zbudujPowloke() {
-  var szukajka = h('input.szukajka', { type: 'search', placeholder: 'Szukaj kalkulatora…',
-    'aria-label': 'Szukaj kalkulatora' });
+  var szukajka = h('input.szukajka', { type: 'search', placeholder: K.T.szukajPlaceholder,
+    'aria-label': K.T.szukajAria });
   var podpowiedzi = h('div.podpowiedzi', { hidden: true });
   var wybrany = -1;
 
@@ -2543,16 +2688,17 @@ function zbudujPowloke() {
     wybrany = -1;
     if (!lista.length) { podpowiedzi.hidden = true; return; }
     lista.forEach(function (c) {
-      podpowiedzi.appendChild(h('a.podpowiedz', { href: '#/k/' + c.id, onclick: function () {
+      podpowiedzi.appendChild(h('a.podpowiedz', { href: '#/' + K.T.trasy.kalk + '/' + c.id, onclick: function () {
         szukajka.value = ''; podpowiedzi.hidden = true;
-      } }, [h('span.pp-nazwa', c.name), h('span.pp-kat', (K.cat(c.cat) || {}).name)]));
+      } }, [h('span.pp-nazwa', c.name),
+            kolorKategorii(h('span.pp-kat.kat-kolor', (K.cat(c.cat) || {}).name), c.cat)]));
     });
     var wszystkie = K.szukaj(szukajka.value).length;
     if (wszystkie > lista.length) {
       podpowiedzi.appendChild(h('a.podpowiedz.podpowiedz-wiecej',
-        { href: '#/szukaj/' + encodeURIComponent(szukajka.value.trim()), onclick: function () {
+        { href: '#/' + K.T.trasy.szukaj + '/' + encodeURIComponent(szukajka.value.trim()), onclick: function () {
           szukajka.value = ''; podpowiedzi.hidden = true;
-        } }, [h('span.pp-nazwa', 'Pokaż wszystkie wyniki (' + wszystkie + ')')]));
+        } }, [h('span.pp-nazwa', K.T.pokazWszystkie(wszystkie))]));
     }
     podpowiedzi.hidden = false;
   }
@@ -2571,7 +2717,7 @@ function zbudujPowloke() {
       if (wybrany >= 0 && opcje[wybrany]) {
         location.hash = opcje[wybrany].getAttribute('href').replace('#', '');
       } else if (szukajka.value.trim()) {
-        location.hash = '/szukaj/' + encodeURIComponent(szukajka.value.trim());
+        location.hash = '/' + K.T.trasy.szukaj + '/' + encodeURIComponent(szukajka.value.trim());
       }
       podpowiedzi.hidden = true; szukajka.blur();
     }
@@ -2586,41 +2732,44 @@ function zbudujPowloke() {
     }
   });
 
-  var motywBtn = h('button.ikona-btn', { title: 'Zmień motyw', 'aria-label': 'Zmień motyw' }, '◐');
+  var motywBtn = h('button.ikona-btn', { title: K.T.zmienMotyw, 'aria-label': K.T.zmienMotyw }, '◐');
   motywBtn.addEventListener('click', function () {
     var kolejny = { auto: 'jasny', jasny: 'ciemny', ciemny: 'auto' }[K.store.ustawienia().motyw || 'auto'];
     K.store.ustaw('motyw', kolejny);
     zastosujMotyw();
-    motywBtn.title = 'Motyw: ' + kolejny;
+    motywBtn.title = K.T.motywNazwa(kolejny);
   });
 
   var nawKategorie = h('div.nawigacja-grupa', K.CATS.map(function (kat) {
     var n = K.inCat(kat.id).length;
     if (!n) return null;
-    return h('a', { href: '#/kat/' + kat.id }, [h('span', kat.name), h('span.nav-licznik', n)]);
+    return kolorKategorii(h('a', { href: '#/' + K.T.trasy.kat + '/' + kat.id }, [
+      h('span.nav-nazwa', [h('span.kat-znacznik'), h('span', kat.name)]),
+      h('span.nav-licznik', n),
+    ]), kat.id);
   }).filter(Boolean));
 
   var bok = h('aside.bok', [
     h('div.bok-gora', [
-      h('a.logo', { href: '#/' }, [h('strong', 'Kalkulatory'), h('span.logo-pl', 'PL')]),
+      h('a.logo', { href: '#/' }, [h('strong', K.T.logo[0]), h('span.logo-pl', K.T.logo[1])]),
       h('div.szukajka-box', [szukajka, podpowiedzi]),
     ]),
     h('nav.nawigacja', [
       h('div.nawigacja-grupa', [
-        h('a', { href: '#/' }, 'Wszystkie'),
-        h('a', { href: '#/ulubione' }, [h('span', 'Ulubione'), h('span.nav-licznik.licznik-ulubionych')]),
-        h('a', { href: '#/historia' }, 'Historia'),
+        h('a', { href: '#/' }, K.T.wszystkie),
+        h('a', { href: '#/' + K.T.trasy.ulubione }, [h('span', K.T.ulubione), h('span.nav-licznik.licznik-ulubionych')]),
+        h('a', { href: '#/' + K.T.trasy.historia }, K.T.historia),
       ]),
-      h('div.nawigacja-tytul', 'Kategorie'),
+      h('div.nawigacja-tytul', K.T.kategorie),
       nawKategorie,
       h('div.nawigacja-grupa.na-dole', [
-        h('a', { href: '#/parametry' }, 'Parametry ' + K.ROK),
-        h('a', { href: '#/dane' }, 'Twoje dane'),
+        h('a', { href: '#/' + K.T.trasy.parametry }, K.T.parametryLink(K.ROK)),
+        h('a', { href: '#/' + K.T.trasy.dane }, K.T.twojeDane),
       ]),
     ]),
   ]);
 
-  var przelacznikMenu = h('button.menu-btn', { 'aria-label': 'Menu' }, '☰');
+  var przelacznikMenu = h('button.menu-btn', { 'aria-label': K.T.menu }, '☰');
   przelacznikMenu.addEventListener('click', function () { document.body.classList.toggle('bok-otwarty'); });
 
   var main = h('main.tresc', { id: 'tresc' });
@@ -2628,13 +2777,12 @@ function zbudujPowloke() {
 
   var pasek = h('header.pasek', [przelacznikMenu, h('div.pasek-srodek'), motywBtn]);
 
-  document.body.appendChild(h('a.pomin-nawigacje', { href: '#tresc' }, 'Przejdź do treści'));
+  document.body.appendChild(h('a.pomin-nawigacje', { href: '#tresc' }, K.T.przejdzDoTresci));
   document.body.appendChild(h('div.aplikacja', [bok, h('div.prawa', [pasek, main,
     h('footer.stopka', [
-      h('p', 'Obliczenia wykonywane lokalnie. Charakter informacyjny — nie stanowią porady ' +
-        'podatkowej ani inwestycyjnej. Kursy walut pobierane na żądanie z API NBP.'),
-      h('p', ['Stawki i limity: ', h('a', { href: '#/parametry' }, K.ROK + ' r.'), ' · ',
-        h('a', { href: '#/dane' }, 'kopia zapasowa danych')]),
+      h('p', K.T.stopkaOpis),
+      h('p', [K.T.stopkaStawki, h('a', { href: '#/' + K.T.trasy.parametry }, K.T.stopkaRok(K.ROK)), ' · ',
+        h('a', { href: '#/' + K.T.trasy.dane }, K.T.stopkaKopia)]),
     ]),
   ])]));
   document.body.appendChild(h('div.zaslona', { onclick: function () { document.body.classList.remove('bok-otwarty'); } }));
@@ -2662,7 +2810,7 @@ K.start = function () {
     if (karta && karta.parentNode) karta.parentNode.replaceChild(K.ui.kartaSynchronizacji(), karta);
   });
   K.render();
-  console.log('Kalkulatory PL — ' + K.ALL.length + ' kalkulatorów gotowych.');
+  console.log(K.T.gotowe(K.ALL.length));
 };
 
 if (typeof document !== 'undefined' && document.addEventListener) {
@@ -2797,6 +2945,217 @@ K.daty.wymiarCzasuPracy = function (rok, miesiac, etat) {
 K.daty.MIESIACE = ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec',
   'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'];
 K.daty.DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];
+
+/* ===== src/core/09-teksty.js ===== */
+/* Warstwa językowa powłoki. Rdzeń (06-ui, 07-app, 05-storage, 12-natywny) nie
+   zawiera tekstu wprost — sięga tutaj. Dzięki temu ten sam silnik obsługuje
+   wydanie polskie i amerykańskie (en-us/src/core/09-teksty.js).
+
+   Kalkulatory mają własne nazwy i opisy w swoich definicjach — ten plik dotyczy
+   wyłącznie powłoki: nawigacji, widoków systemowych i komunikatów. */
+window.K = window.K || {};
+
+K.CATS = [
+  { id:'praca',      name:'Praca i wynagrodzenia', desc:'Etat, zlecenie, dzieło, B2B, urlopy, nadgodziny.', kolor:210 },
+  { id:'podatki',    name:'Podatki',               desc:'PIT, VAT, ryczałt, PCC, spadki i darowizny.', kolor:348 },
+  { id:'firma',      name:'Firma i JDG',           desc:'ZUS przedsiębiorcy, forma opodatkowania, marże, faktury.', kolor:125 },
+  { id:'kredyty',    name:'Kredyty i pożyczki',    desc:'Raty, RRSO, nadpłata, zdolność, leasing.', kolor:262 },
+  { id:'nieruchom',  name:'Nieruchomości',         desc:'Zakup, sprzedaż, koszty transakcyjne, opłacalność.', kolor:40 },
+  { id:'najem',      name:'Najem i rozliczenia',   desc:'Podatek od najmu, media, podział kosztów na lokatorów.', kolor:178 },
+  { id:'oszczedn',   name:'Oszczędności',          desc:'Procent składany, lokaty, obligacje, cele.', kolor:315 },
+  { id:'inwest',     name:'Inwestycje',            desc:'ETF, akcje, dywidendy, portfel, ryzyko.', kolor:92 },
+  { id:'emerytura',  name:'Emerytura i ZUS',       desc:'Prognoza emerytury, IKE, IKZE, PPK, kapitał.', kolor:230 },
+  { id:'rodzina',    name:'Rodzina i świadczenia', desc:'800+, alimenty, zasiłki, koszty dziecka.', kolor:8 },
+  { id:'auto',       name:'Auto i transport',      desc:'Spalanie, koszt trasy, leasing, opony, akcyza.', kolor:145 },
+  { id:'dom',        name:'Dom i energia',         desc:'Prąd, gaz, ogrzewanie, fotowoltaika, woda.', kolor:282 },
+  { id:'budowa',     name:'Budowa i remont',       desc:'Farba, płytki, panele, beton, izolacja.', kolor:60 },
+  { id:'czas',       name:'Czas i daty',           desc:'Dni robocze, terminy, wiek, grafik godzin.', kolor:198 },
+  { id:'codzien',    name:'Codzienne liczenie',    desc:'Rachunek do podziału, rabaty, cena za kg, paczki.', kolor:335 },
+  { id:'zdrowie',    name:'Zdrowie i ciało',       desc:'Nawodnienie, dawki leków, promile, sen, ciąża.', kolor:112 },
+  { id:'forma',      name:'Masa ciała i forma',    desc:'BMI, waga należna, odchudzanie, kalorie, tętno, trening.', kolor:250 },
+  { id:'matma',      name:'Matematyka i jednostki',desc:'Procenty, proporcje, przeliczniki, geometria.', kolor:28 },
+  { id:'prawo',      name:'Prawo i urzędy',        desc:'Odsetki, opłaty sądowe, waloryzacja, kary.', kolor:165 },
+  { id:'tekst',      name:'Tekst i pisanie',       desc:'Statystyki tekstu, strony rozliczeniowe, limity znaków.', kolor:302 },
+];
+
+K.T = {
+  jezyk: 'pl-PL',
+  logo: ['Kalkulatory', 'PL'],
+
+  /* Segmenty adresu. Trafiają do linków, więc zmiana unieważnia zapisane odnośniki. */
+  trasy: {
+    kalk: 'k', kat: 'kat', szukaj: 'szukaj', ulubione: 'ulubione',
+    historia: 'historia', parametry: 'parametry', dane: 'dane',
+  },
+
+  /** Normalizacja do wyszukiwania — pozwala znaleźć „zlecenie” po wpisaniu „zlecenie”. */
+  normalizuj: function (s) {
+    return String(s || '').toLowerCase()
+      .replace(/ą/g, 'a').replace(/ć/g, 'c').replace(/ę/g, 'e').replace(/ł/g, 'l')
+      .replace(/ń/g, 'n').replace(/ó/g, 'o').replace(/ś/g, 's').replace(/[żź]/g, 'z');
+  },
+
+  /** Odmiana rzeczownika „kalkulator” przez liczbę. */
+  ileKalkulatorow: function (n) {
+    return n + ' ' + K.fmt.odmiana(n, 'kalkulator', 'kalkulatory', 'kalkulatorów');
+  },
+
+  /* Sufiksy pól liczbowych w formularzach. */
+  sufiksy: { money: 'zł', pct: '%', lata: 'lat', mies: 'mies.', dni: 'dni',
+             m2: 'm²', km: 'km', kwh: 'kWh', h: 'h' },
+
+  /* ---- Nawigacja i powłoka ---- */
+  szukajPlaceholder: 'Szukaj kalkulatora…',
+  szukajAria: 'Szukaj kalkulatora',
+  pokazWszystkie: function (n) { return 'Pokaż wszystkie wyniki (' + n + ')'; },
+  zmienMotyw: 'Zmień motyw',
+  motywNazwa: function (m) { return 'Motyw: ' + m; },
+  wszystkie: 'Wszystkie',
+  ulubione: 'Ulubione',
+  historia: 'Historia',
+  kategorie: 'Kategorie',
+  parametryLink: function (rok) { return 'Parametry ' + rok; },
+  twojeDane: 'Twoje dane',
+  menu: 'Menu',
+  przejdzDoTresci: 'Przejdź do treści',
+  stopkaOpis: 'Obliczenia wykonywane lokalnie. Charakter informacyjny — nie stanowią porady ' +
+    'podatkowej ani inwestycyjnej. Kursy walut pobierane na żądanie z API NBP.',
+  stopkaStawki: 'Stawki i limity: ',
+  stopkaRok: function (rok) { return rok + ' r.'; },
+  stopkaKopia: 'kopia zapasowa danych',
+  gotowe: function (n) { return 'Kalkulatory PL — ' + n + ' kalkulatorów gotowych.'; },
+
+  /* ---- Kafelki i listy ---- */
+  usunZUlubionych: 'Usuń z ulubionych',
+  dodajDoUlubionych: 'Dodaj do ulubionych',
+  pustoDomyslnie: 'Nic tu jeszcze nie ma.',
+  podobneKalkulatory: 'Podobne kalkulatory',
+  start: 'Start',
+
+  /* ---- Widok startowy ---- */
+  startTytul: 'Kalkulatory',
+  startOpis: function (n, rok) {
+    return n + ' kalkulatorów na polskich przepisach i stawkach ' + rok +
+      '. Wszystko liczy się na Twoim urządzeniu. Jedyne połączenie z siecią to pobranie ' +
+      'kursu waluty z API NBP — i tylko wtedy, gdy sam o to poprosisz.';
+  },
+  ostatnieObliczenia: 'Ostatnie obliczenia',
+
+  /* ---- Wyszukiwanie ---- */
+  wynikiDla: function (fraza) { return 'Wyniki dla „' + fraza + '”'; },
+  znaleziono: function (n) { return 'Znaleziono ' + K.T.ileKalkulatorow(n) + '.'; },
+  nicNiePasuje: 'Nic nie pasuje do tej frazy. Spróbuj innego słowa albo przejrzyj kategorie.',
+  brakKategorii: 'Nie ma takiej kategorii.',
+
+  /* ---- Historia i ulubione ---- */
+  usunWpis: 'Usuń wpis',
+  ulubioneOpis: 'Kalkulatory oznaczone gwiazdką. Zapisane w tej przeglądarce.',
+  brakUlubionych: 'Nie masz jeszcze ulubionych. Kliknij ☆ przy dowolnym kalkulatorze.',
+  historiaTytul: 'Historia obliczeń',
+  historiaOpis: 'Zapisane wyniki. Kliknij nazwę, aby wrócić do kalkulatora z tymi samymi danymi.',
+  historiaPotwierdz: 'Usunąć całą historię obliczeń?',
+  wyczyscHistorie: 'Wyczyść historię',
+  historiaPusta: 'Historia jest pusta. W kalkulatorze kliknij „Zapisz obliczenie”.',
+
+  /* ---- Parametry ---- */
+  parametryTytul: function (rok) { return 'Parametry ' + rok; },
+  parametryOpis: function (data) {
+    return 'Wszystkie stawki i limity użyte w obliczeniach. Stan na ' + data + '.';
+  },
+  parametryZastrzezenie: 'Kalkulatory mają charakter informacyjny i nie zastępują porady księgowego ' +
+    'ani doradcy podatkowego. Przepisy zmieniają się w trakcie roku — przy ważnych decyzjach zweryfikuj wynik.',
+
+  /* ---- Twoje dane ---- */
+  daneOpisSync: 'Ulubione, historia i ostatnie wartości zapisują się w Twoim iCloud Drive ' +
+    'i są dostępne na każdym Twoim urządzeniu.',
+  daneOpisLokalne: 'Ulubione i historia trzymane są wyłącznie w pamięci tej przeglądarki. ' +
+    'Zrób kopię, żeby przenieść je na inne urządzenie.',
+  daneStan: 'Stan',
+  daneUlubione: 'Ulubione kalkulatory',
+  daneObliczenia: 'Zapisane obliczenia',
+  daneDostepne: 'Dostępne kalkulatory',
+  daneKopia: 'Kopia zapasowa',
+  daneKopiaOpis: 'Plik JSON z ulubionymi, historią i ostatnio wpisanymi wartościami.',
+  daneEksport: 'Eksportuj do JSON',
+  daneWczytaj: 'Wczytaj kopię',
+  daneWczytajOpis: 'Wskaż plik JSON wyeksportowany wcześniej z tej aplikacji.',
+  daneWybierzPlik: 'Wybierz plik…',
+  daneDolacz: 'Dołącz do istniejących danych',
+  daneZastap: 'Zastąp istniejące dane',
+  daneUsuwanie: 'Usuwanie',
+  daneUsuwanieOpis: 'Kasuje ulubione, historię i zapamiętane wartości z tej przeglądarki.',
+  daneUsunWszystko: 'Usuń wszystkie dane',
+  daneUsunPotwierdz: 'Usunąć wszystkie zapisane dane? Tej operacji nie da się cofnąć.',
+  daneNazwaPliku: 'kalkulatory-',
+  daneZaimportowano: function (r) {
+    return 'Zaimportowano: ' + r.ulubione + ' ulubionych, ' + r.historia + ' wpisów historii' +
+      (r.pominieto ? ' (pominięto ' + r.pominieto + ' nieznanych pozycji)' : '') + '.';
+  },
+  daneBladWczytania: function (msg) { return 'Nie udało się wczytać: ' + msg; },
+  daneZlaKopia: 'Brak sekcji „ulubione” i „historia” — to nie jest kopia danych kalkulatorów.',
+
+  /* ---- Widok kalkulatora ---- */
+  brakKalkulatora: 'Nie znaleziono kalkulatora.',
+  bladObliczen: function (msg) { return 'Błąd obliczeń: ' + msg; },
+  ulubionyBtn: 'Ulubiony',
+  zapiszObliczenie: 'Zapisz obliczenie',
+  zapisanoPtaszek: 'Zapisano ✓',
+  wartosciDomyslne: 'Wartości domyślne',
+  zalozenia: 'Założenia',
+  usunWiersz: 'Usuń wiersz',
+
+  /* ---- Wydruk i PDF ---- */
+  podgladDruku: 'Podgląd druku',
+  ukryjDruk: 'Ukryj druk',
+  eksportujPDF: 'Eksportuj PDF',
+  przygotowywanie: 'Przygotowywanie…',
+  bladDruku: function (msg) { return 'Nie udało się złożyć druku: ' + msg; },
+  bladDokumentu: function (msg) { return 'Nie udało się złożyć dokumentu: ' + msg; },
+  bladOknaDruku: function (msg) { return 'Nie udało się otworzyć okna drukowania: ' + msg; },
+  bladPDF: function (msg) { return 'Nie udało się wyeksportować PDF: ' + msg; },
+  domyslnaNazwaDokumentu: 'dokument',
+
+  /* ---- Narzędzia osadzone ---- */
+  bladNarzedzia: function (nazwa) { return 'Nie udało się wczytać narzędzia „' + nazwa + '”.'; },
+  pelneOkno: 'Pełne okno',
+  zmniejsz: 'Zmniejsz',
+
+  /* ---- Pasek zapisanych dokumentów ---- */
+  dokAria: 'Zapisane dokumenty',
+  dokEtykieta: 'Zapisane',
+  dokOtwarty: function (nazwa) { return 'Otwarty: ' + nazwa; },
+  dokNiezapisany: 'Niezapisany — kliknij „Zapisz”',
+  dokListaPusta: '— brak zapisanych —',
+  dokListaPelna: '— zapisane dokumenty —',
+  dokZapisz: 'Zapisz',
+  dokZapiszJako: 'Zapisz jako…',
+  dokNowy: 'Nowy',
+  dokUsun: 'Usuń',
+  dokZapisano: 'Zapisano',
+  dokUsunieto: 'Usunięto',
+  dokNieZnaleziono: 'Nie znaleziono dokumentu.',
+  dokWczytano: function (nazwa) { return 'Wczytano: ' + nazwa; },
+  dokNazwaPrompt: 'Nazwa dokumentu:',
+  dokNowyPotwierdz: 'Zacząć nowy dokument? Otwarty pozostanie zapisany.',
+  dokNiezapisanyBlad: 'Ten dokument nie jest jeszcze zapisany.',
+  dokUsunPotwierdz: function (nazwa) { return 'Usunąć „' + nazwa + '”?'; },
+  /** Znaki dozwolone w nazwie pliku PDF — reszta wypada. */
+  dozwoloneWNazwie: /[^\wąćęłńóśżźĄĆĘŁŃÓŚŻŹ .·-]+/g,
+
+  /* ---- Synchronizacja ---- */
+  syncTytul: 'Synchronizacja z iCloud',
+  syncGotowe: 'Zsynchronizowane',
+  syncZapisywanie: 'Zapisywanie…',
+  syncPobieranie: 'Pobieranie zmian…',
+  syncOstatnio: ' · ostatnio ',
+  syncLokalnie: 'Zapis tylko na tym urządzeniu',
+  syncBlad: 'Błąd synchronizacji',
+  syncOpis: 'Dane zapisują się w Twoim iCloud Drive, w folderze aplikacji.',
+  syncOpisNatywny: 'Dane zapisują się w Twoim iCloud Drive, w folderze aplikacji Kalkulatory.',
+  syncOdswiez: 'Odśwież teraz',
+  syncPokazPlik: 'Pokaż plik w Plikach',
+  bladOdczytuPliku: 'Nie udało się odczytać pliku.',
+};
 
 /* ===== src/core/10-strony.js ===== */
 /* PLIK GENEROWANY — nie edytuj ręcznie.
@@ -2998,7 +3357,7 @@ K.kursy = {
   K.sync = {
     dostepny: true,
     stan: 'gotowe',
-    opis: 'Dane zapisują się w Twoim iCloud Drive, w folderze aplikacji Kalkulatory.',
+    opis: K.T.syncOpisNatywny,
     zmodyfikowano: null,
     odswiez: function () { doSwift({ typ: 'odswiez' }); },
     pokazWPlikach: function () { doSwift({ typ: 'pokazWPlikach' }); },
@@ -3038,7 +3397,7 @@ K.kursy = {
     bladPDF: function (opis) {
       var cb = bladPDF;
       bladPDF = null;
-      if (cb) cb('Nie udało się wyeksportować PDF: ' + opis);
+      if (cb) cb(K.T.bladPDF(opis));
       else console.warn('PDF:', opis);
     },
 
@@ -19369,15 +19728,15 @@ K.register([
 ]);
 })();
 
-/* ===== src/calculators/92-zdrowie.js ===== */
-/* Zdrowie i ciało. */
+/* ===== src/calculators/92-forma.js ===== */
+/* Masa ciała, forma i trening. */
 (function () {
 var n = K.n, pr = K.pr, P = K.P;
 
 K.register([
 
 {
-  id: 'bmi', cat: 'zdrowie',
+  id: 'bmi', cat: 'forma',
   name: 'BMI i zakres prawidłowej masy',
   desc: 'Wskaźnik masy ciała z interpretacją i wagą docelową.',
   tags: ['bmi', 'waga', 'masa ciała', 'otyłość', 'wzrost', 'zdrowie'],
@@ -19459,7 +19818,7 @@ K.register([
 },
 
 {
-  id: 'zapotrzebowanie-kaloryczne', cat: 'zdrowie',
+  id: 'zapotrzebowanie-kaloryczne', cat: 'forma',
   name: 'Zapotrzebowanie kaloryczne',
   desc: 'Podstawowa i całkowita przemiana materii według aktywności.',
   tags: ['kalorie', 'bmr', 'cpm', 'zapotrzebowanie', 'dieta', 'metabolizm'],
@@ -19545,7 +19904,7 @@ K.register([
 },
 
 {
-  id: 'odchudzanie-plan', cat: 'zdrowie',
+  id: 'odchudzanie-plan', cat: 'forma',
   name: 'Plan redukcji masy ciała',
   desc: 'Ile potrwa osiągnięcie celu przy danym deficycie kalorycznym.',
   tags: ['odchudzanie', 'redukcja', 'deficyt', 'plan', 'waga', 'dieta'],
@@ -19613,73 +19972,7 @@ K.register([
 },
 
 {
-  id: 'nawodnienie', cat: 'zdrowie',
-  name: 'Ile wody dziennie',
-  desc: 'Zapotrzebowanie na płyny według masy ciała, aktywności i temperatury.',
-  tags: ['woda', 'nawodnienie', 'picie', 'zdrowie', 'płyny'],
-  inputs: [
-    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
-    { k: 'aktywnosc', label: 'Minut aktywności fizycznej dziennie', type: 'num', def: 45, suffix: 'min' },
-    { k: 'temperatura', label: 'Temperatura otoczenia', type: 'select', def: 'normalna', options: [
-      { v: 'chlodno', l: 'Poniżej 15°C' }, { v: 'normalna', l: '15–25°C' },
-      { v: 'cieplo', l: '25–30°C' }, { v: 'upal', l: 'Powyżej 30°C' },
-    ] },
-    { k: 'kawa', label: 'Filiżanek kawy dziennie', type: 'int', def: 3 },
-    { k: 'alkohol', label: 'Jednostek alkoholu dziennie', type: 'num', def: 0 },
-    { k: 'ciaza', label: 'Ciąża lub karmienie', type: 'select', def: 'nie', options: [
-      { v: 'nie', l: 'Nie dotyczy' }, { v: 'ciaza', l: 'Ciąża — +300 ml' },
-      { v: 'karmienie', l: 'Karmienie piersią — +700 ml' },
-    ] },
-  ],
-  compute: function (v) {
-    var bazowa = n(v.waga, 78) * 30;   // ml na kg masy ciała
-    var zaAktywnosc = n(v.aktywnosc, 45) / 30 * 350;
-    var mnoznikTemp = { chlodno: 0, normalna: 0, cieplo: 400, upal: 800 }[v.temperatura] || 0;
-    var zaKawe = n(v.kawa, 3) * 50;
-    var zaAlkohol = n(v.alkohol) * 250;
-    var zaCiaze = { nie: 0, ciaza: 300, karmienie: 700 }[v.ciaza] || 0;
-
-    var razem = bazowa + zaAktywnosc + mnoznikTemp + zaKawe + zaAlkohol + zaCiaze;
-    // Około 20% płynów pochodzi z pożywienia.
-    var zNapojow = razem * 0.8;
-    var szklanek = zNapojow / 250;
-
-    return {
-      main: [
-        { label: 'Zapotrzebowanie na płyny', value: razem / 1000, f: 'num', dec: 2, hint: 'litrów' },
-        { label: 'Z napojów', value: zNapojow / 1000, f: 'num', dec: 2, hint: 'litrów' },
-        { label: 'Szklanek 250 ml', value: szklanek, f: 'num', dec: 0 },
-      ],
-      rows: [
-        { label: 'Zapotrzebowanie podstawowe', sub: '30 ml na kilogram masy ciała',
-          value: bazowa, f: 'num', dec: 0, sub2: 'ml' },
-        zaAktywnosc ? { label: 'Za aktywność fizyczną', value: zaAktywnosc, f: 'num', dec: 0, sub: 'ml' } : null,
-        mnoznikTemp ? { label: 'Za wysoką temperaturę', value: mnoznikTemp, f: 'num', dec: 0, sub: 'ml' } : null,
-        zaKawe ? { label: 'Kompensacja kawy', value: zaKawe, f: 'num', dec: 0, sub: 'ml' } : null,
-        zaAlkohol ? { label: 'Kompensacja alkoholu', value: zaAlkohol, f: 'num', dec: 0, sub: 'ml' } : null,
-        zaCiaze ? { label: 'Ciąża lub karmienie', value: zaCiaze, f: 'num', dec: 0, sub: 'ml' } : null,
-        { label: 'Razem', value: razem, f: 'num', dec: 0, sub: 'ml', strong: true },
-        { separator: true },
-        { label: 'Z pożywienia (około 20%)', value: razem * 0.2, f: 'num', dec: 0, sub: 'ml' },
-        { label: 'Do wypicia', value: zNapojow, f: 'num', dec: 0, sub: 'ml', strong: true },
-        { label: 'Butelek 0,5 l', value: zNapojow / 500, f: 'num', dec: 1 },
-        { label: 'Szklanek 250 ml', value: szklanek, f: 'num', dec: 1 },
-        { separator: true },
-        { label: 'Co ile pić szklankę', text: K.fmt.num(K.dziel(16 * 60, szklanek), 0) + ' minut',
-          sub: 'przez 16 godzin czuwania' },
-      ].filter(Boolean),
-      notes: [
-        'Najlepszym wskaźnikiem nawodnienia jest kolor moczu — powinien być jasnożółty.',
-        'Kawa nie odwadnia tak, jak się powszechnie sądzi — przy regularnym piciu efekt moczopędny jest niewielki.',
-        'Pragnienie pojawia się dopiero przy odwodnieniu rzędu 1–2% masy ciała — nie czekaj na nie.',
-        'Przy intensywnym wysiłku powyżej godziny warto uzupełniać także elektrolity, nie tylko wodę.',
-      ],
-    };
-  },
-},
-
-{
-  id: 'tetno-treningowe', cat: 'zdrowie',
+  id: 'tetno-treningowe', cat: 'forma',
   name: 'Strefy tętna treningowego',
   desc: 'Tętno maksymalne i pięć stref intensywności metodą rezerwy tętna.',
   tags: ['tętno', 'trening', 'strefy', 'bieganie', 'kardio', 'puls'],
@@ -19741,6 +20034,494 @@ K.register([
         'Wzór Tanaki (208 − 0,7 × wiek) jest trafniejszy dla osób powyżej 40. roku życia niż popularne „220 − wiek”.',
         'Model 80/20: około 80% treningu w niskich strefach, 20% w wysokich. To zasada stosowana przez większość zawodowców.',
         'Wyliczone tętno maksymalne ma margines błędu ±10–12 uderzeń. Najdokładniejszy jest test wysiłkowy pod nadzorem.',
+      ],
+    };
+  },
+},
+
+{
+  id: 'tempo-biegu', cat: 'forma',
+  name: 'Tempo biegu i czas na dystansie',
+  desc: 'Przeliczenie tempa, prędkości i prognozowanego czasu na innych dystansach.',
+  tags: ['bieganie', 'tempo', 'maraton', 'dystans', 'czas', 'prędkość'],
+  inputs: [
+    { k: 'tryb', label: 'Co znasz', type: 'select', def: 'czas', options: [
+      { v: 'czas', l: 'Czas i dystans — policz tempo' },
+      { v: 'tempo', l: 'Tempo i dystans — policz czas' },
+    ] },
+    { k: 'dystans', label: 'Dystans', type: 'num', def: 10, suffix: 'km', step: 0.1 },
+    { k: 'godziny', label: 'Godziny', type: 'int', def: 0,
+      pokaz: function (v) { return v.tryb === 'czas'; } },
+    { k: 'minuty', label: 'Minuty', type: 'int', def: 52,
+      pokaz: function (v) { return v.tryb === 'czas'; } },
+    { k: 'sekundy', label: 'Sekundy', type: 'int', def: 30,
+      pokaz: function (v) { return v.tryb === 'czas'; } },
+    { k: 'tempoMin', label: 'Tempo — minuty na km', type: 'int', def: 5,
+      pokaz: function (v) { return v.tryb === 'tempo'; } },
+    { k: 'tempoSek', label: 'Tempo — sekundy', type: 'int', def: 15,
+      pokaz: function (v) { return v.tryb === 'tempo'; } },
+  ],
+  compute: function (v) {
+    var dystans = Math.max(0.001, n(v.dystans, 10));
+    var sekundy;
+    if (v.tryb === 'czas') {
+      sekundy = n(v.godziny) * 3600 + n(v.minuty, 52) * 60 + n(v.sekundy, 30);
+    } else {
+      sekundy = (n(v.tempoMin, 5) * 60 + n(v.tempoSek, 15)) * dystans;
+    }
+    var tempoSek = K.dziel(sekundy, dystans);
+    var predkosc = K.dziel(dystans, sekundy / 3600);
+
+    function czas(s) {
+      s = Math.round(s);
+      var g = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sek = s % 60;
+      return (g ? g + ':' + String(m).padStart(2, '0') : m) + ':' + String(sek).padStart(2, '0');
+    }
+    function tempo(s) {
+      s = Math.round(s);
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }
+
+    // Prognoza na innych dystansach — wzór Riegela (wykładnik 1,06).
+    var dystanse = [
+      { l: '1 km', d: 1 }, { l: '5 km', d: 5 }, { l: '10 km', d: 10 },
+      { l: 'Półmaraton', d: 21.0975 }, { l: 'Maraton', d: 42.195 },
+    ];
+
+    return {
+      main: [
+        { label: 'Tempo', text: tempo(tempoSek) + ' min/km' },
+        { label: 'Prędkość', value: predkosc, f: 'num', dec: 2, hint: 'km/h' },
+        { label: 'Czas', text: czas(sekundy) },
+      ],
+      table: {
+        cols: [{ label: 'Dystans', num: false }, { label: 'Prognozowany czas', num: false },
+          { label: 'Tempo', num: false }, 'Prędkość'],
+        rows: dystanse.map(function (d) {
+          var t = sekundy * Math.pow(d.d / dystans, 1.06);
+          return { mocny: Math.abs(d.d - dystans) < 0.5, cells: [d.l, czas(t),
+            tempo(t / d.d) + ' min/km', { value: K.dziel(d.d, t / 3600), f: 'num', dec: 2 }] };
+        }),
+        note: 'Prognoza wzorem Riegela — zakłada podobne przygotowanie na wszystkich dystansach.',
+      },
+      rows: [
+        { label: 'Dystans', value: dystans, f: 'num', dec: 3, sub: 'km' },
+        { label: 'Czas', text: czas(sekundy), strong: true },
+        { label: 'Tempo', text: tempo(tempoSek) + ' min/km', strong: true },
+        { label: 'Prędkość', value: predkosc, f: 'num', dec: 2, sub: 'km/h' },
+        { label: 'Tempo w milach', text: tempo(tempoSek * 1.60934) + ' min/milę' },
+        { separator: true },
+        { label: 'Czas na 100 m', text: tempo(tempoSek / 10) },
+        { label: 'Kroków (przy 165 kroków/min)', value: sekundy / 60 * 165, f: 'num', dec: 0 },
+        { label: 'Szacowany wydatek energetyczny',
+          value: dystans * 65, f: 'num', dec: 0, sub: 'kcal przy 78 kg' },
+      ],
+      notes: [
+        'Wzór Riegela: czas₂ = czas₁ × (dystans₂ ÷ dystans₁)^1,06. Sprawdza się przy dystansach różniących się nie więcej niż czterokrotnie.',
+        'Prognoza maratonu z czasu na 10 km bywa zbyt optymistyczna — maraton wymaga osobnego przygotowania wytrzymałościowego.',
+        'Wydatek energetyczny biegu to około 1 kcal na kilogram masy ciała na kilometr, niezależnie od tempa.',
+      ],
+    };
+  },
+},
+
+{
+  id: 'spalone-kalorie', cat: 'forma',
+  name: 'Kalorie spalone podczas aktywności',
+  desc: 'Wydatek energetyczny różnych aktywności według wskaźnika MET.',
+  tags: ['kalorie', 'spalanie', 'aktywność', 'trening', 'met', 'sport'],
+  inputs: [
+    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
+    { k: 'aktywnosc', label: 'Aktywność', type: 'select', def: 8, options: [
+      { v: 2.5, l: 'Spacer wolny (3 km/h)' },
+      { v: 3.5, l: 'Marsz (5 km/h)' },
+      { v: 5, l: 'Marsz szybki (6,5 km/h)' },
+      { v: 8, l: 'Bieg (8 km/h)' },
+      { v: 11.5, l: 'Bieg szybki (11 km/h)' },
+      { v: 6, l: 'Rower rekreacyjnie (16 km/h)' },
+      { v: 10, l: 'Rower szybko (25 km/h)' },
+      { v: 7, l: 'Pływanie umiarkowanie' },
+      { v: 6, l: 'Trening siłowy' },
+      { v: 7.3, l: 'Zajęcia fitness' },
+      { v: 3.5, l: 'Prace domowe' },
+      { v: 4.5, l: 'Praca w ogrodzie' },
+      { v: 5.5, l: 'Taniec' },
+      { v: 8, l: 'Wspinaczka i turystyka górska' },
+    ] },
+    { k: 'czas', label: 'Czas trwania', type: 'num', def: 45, suffix: 'min' },
+    { k: 'razyTydzien', label: 'Razy w tygodniu', type: 'num', def: 3 },
+  ],
+  compute: function (v) {
+    var met = n(v.aktywnosc, 8), waga = n(v.waga, 78), minuty = n(v.czas, 45);
+    // Kalorie = MET × masa ciała (kg) × czas (h)
+    var kalorie = met * waga * (minuty / 60);
+    var naTydzien = kalorie * n(v.razyTydzien, 3);
+    var naMiesiac = naTydzien * 4.35;
+    var kgTluszczuRocznie = naTydzien * 52 / 7700;
+
+    var por = [
+      { l: 'Spacer', met: 3.5 }, { l: 'Bieg 8 km/h', met: 8 }, { l: 'Rower 16 km/h', met: 6 },
+      { l: 'Pływanie', met: 7 }, { l: 'Siłownia', met: 6 },
+    ];
+
+    return {
+      main: [
+        { label: 'Spalone kalorie', value: kalorie, f: 'num', dec: 0, hint: 'kcal' },
+        { label: 'Tygodniowo', value: naTydzien, f: 'num', dec: 0, hint: 'kcal' },
+        { label: 'Rocznie odpowiada', value: kgTluszczuRocznie, f: 'num', dec: 1, hint: 'kg tłuszczu' },
+      ],
+      rows: [
+        { label: 'Wskaźnik MET', value: met, f: 'num', dec: 1 },
+        { label: 'Masa ciała', value: waga, f: 'num', dec: 1, sub: 'kg' },
+        { label: 'Czas', value: minuty, f: 'num', dec: 0, sub: 'minut' },
+        { label: 'Spalone kalorie', value: kalorie, f: 'num', dec: 0, sub: 'kcal', strong: true },
+        { label: 'Na minutę', value: K.dziel(kalorie, minuty), f: 'num', dec: 1, sub: 'kcal' },
+        { separator: true },
+        { label: 'Tygodniowo', value: naTydzien, f: 'num', dec: 0, sub: 'kcal' },
+        { label: 'Miesięcznie', value: naMiesiac, f: 'num', dec: 0, sub: 'kcal' },
+        { label: 'Rocznie', value: naTydzien * 52, f: 'num', dec: 0, sub: 'kcal' },
+        { separator: true },
+        { label: 'Odpowiada tygodniowo', text: K.fmt.num(naTydzien / 7700 * 1000, 0) + ' g tkanki tłuszczowej' },
+        { label: 'Ekwiwalent w jedzeniu', text: K.fmt.num(kalorie / 250, 1) + ' pączka albo ' +
+          K.fmt.num(kalorie / 500, 1) + ' pizzy' },
+      ],
+      table: {
+        cols: [{ label: 'Aktywność', num: false }, 'MET', 'Kalorie w ' + K.fmt.num(minuty, 0) + ' min',
+          'Czas na 500 kcal'],
+        rows: por.map(function (p) {
+          var k = p.met * waga * (minuty / 60);
+          return { mocny: Math.abs(p.met - met) < 0.3, cells: [p.l, K.fmt.num(p.met, 1),
+            { value: k, f: 'num', dec: 0 },
+            { text: K.fmt.num(K.dziel(500 * 60, p.met * waga), 0) + ' min' }] };
+        }),
+      },
+      notes: [
+        'MET to wielokrotność spoczynkowego wydatku energetycznego. Aktywność o MET 8 spala osiem razy więcej niż siedzenie.',
+        'Wyliczenie obejmuje całkowity wydatek, w tym metabolizm podstawowy — netto (ponad spoczynek) jest o mniej więcej 10% niższy.',
+        'Wyniki z zegarków sportowych bywają zawyżone nawet o 20–30%, zwłaszcza przy treningu siłowym.',
+        'Aktywność fizyczna to nie tylko kalorie — poprawia wrażliwość na insulinę, nastrój i jakość snu.',
+      ],
+    };
+  },
+},
+
+{
+  id: 'obwody-ciala', cat: 'forma',
+  name: 'Obwody ciała i procent tkanki tłuszczowej',
+  desc: 'Metoda US Navy — szacunek zawartości tłuszczu z obwodów.',
+  tags: ['tkanka tłuszczowa', 'obwody', 'talia', 'body fat', 'sylwetka', 'whr'],
+  inputs: [
+    { k: 'plec', label: 'Płeć', type: 'select', def: 'm', options: [
+      { v: 'm', l: 'Mężczyzna' }, { v: 'k', l: 'Kobieta' },
+    ] },
+    { k: 'wzrost', label: 'Wzrost', type: 'num', def: 178, suffix: 'cm' },
+    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
+    { k: 'szyja', label: 'Obwód szyi', type: 'num', def: 38, suffix: 'cm', step: 0.5 },
+    { k: 'talia', label: 'Obwód talii', type: 'num', def: 88, suffix: 'cm', step: 0.5 },
+    { k: 'biodra', label: 'Obwód bioder', type: 'num', def: 98, suffix: 'cm', step: 0.5,
+      hint: 'Potrzebny tylko dla kobiet.' },
+  ],
+  compute: function (v) {
+    var wzrost = n(v.wzrost, 178), talia = n(v.talia, 88), szyja = n(v.szyja, 38);
+    var biodra = n(v.biodra, 98), waga = n(v.waga, 78);
+    var bf;
+    if (v.plec === 'm') {
+      var x = talia - szyja;
+      bf = x > 0 && wzrost > 0
+        ? 495 / (1.0324 - 0.19077 * Math.log10(x) + 0.15456 * Math.log10(wzrost)) - 450 : 0;
+    } else {
+      var y = talia + biodra - szyja;
+      bf = y > 0 && wzrost > 0
+        ? 495 / (1.29579 - 0.35004 * Math.log10(y) + 0.22100 * Math.log10(wzrost)) - 450 : 0;
+    }
+    bf = K.clamp(bf, 0, 70);
+
+    var masaTluszczu = waga * bf / 100;
+    var masaBeztluszczowa = waga - masaTluszczu;
+    var whr = K.dziel(talia, biodra);
+
+    var kategorie = v.plec === 'm'
+      ? [['Niezbędny', 2, 5], ['Sportowy', 6, 13], ['Fitness', 14, 17], ['Przeciętny', 18, 24], ['Otyłość', 25, 100]]
+      : [['Niezbędny', 10, 13], ['Sportowy', 14, 20], ['Fitness', 21, 24], ['Przeciętny', 25, 31], ['Otyłość', 32, 100]];
+    var kat = kategorie.filter(function (k) { return bf >= k[1] && bf <= k[2]; })[0];
+
+    return {
+      main: [
+        { label: 'Tkanka tłuszczowa', value: bf / 100, f: 'pct' },
+        { label: 'Masa tłuszczu', value: masaTluszczu, f: 'num', dec: 1, hint: 'kg' },
+        { label: 'Kategoria', text: kat ? kat[0] : '—' },
+      ],
+      rows: [
+        { label: 'Masa ciała', value: waga, f: 'num', dec: 1, sub: 'kg' },
+        { label: 'Tkanka tłuszczowa', value: bf / 100, f: 'pct', strong: true },
+        { label: 'Masa tłuszczu', value: masaTluszczu, f: 'num', dec: 2, sub: 'kg' },
+        { label: 'Masa beztłuszczowa', value: masaBeztluszczowa, f: 'num', dec: 2, sub: 'kg', strong: true },
+        { separator: true },
+        { label: 'Obwód talii', value: talia, f: 'num', dec: 1, sub: 'cm' },
+        { label: 'Obwód bioder', value: biodra, f: 'num', dec: 1, sub: 'cm' },
+        { label: 'Wskaźnik talia/biodra (WHR)', value: whr, f: 'num', dec: 3,
+          sub: (v.plec === 'm' ? (whr < 0.9 ? 'w normie' : 'podwyższone ryzyko')
+            : (whr < 0.8 ? 'w normie' : 'podwyższone ryzyko')) },
+        { label: 'Talia/wzrost', value: K.dziel(talia, wzrost), f: 'num', dec: 3,
+          sub: K.dziel(talia, wzrost) < 0.5 ? 'w normie' : 'powyżej zalecanego' },
+      ],
+      table: {
+        cols: [{ label: 'Kategoria', num: false }, { label: 'Zakres', num: false }, 'Masa tłuszczu przy Twojej wadze'],
+        rows: kategorie.map(function (k) {
+          return { mocny: kat && k[0] === kat[0], cells: [k[0],
+            k[1] + '–' + (k[2] === 100 ? 'więcej' : k[2]) + '%',
+            { text: K.fmt.num(waga * k[1] / 100, 1) + '–' + K.fmt.num(waga * Math.min(k[2], 45) / 100, 1) + ' kg' }] };
+        }),
+      },
+      notes: [
+        'Metoda US Navy ma dokładność około ±3–4 punktów procentowych — wystarczającą do śledzenia zmian w czasie.',
+        'Obwód talii mierz na wysokości pępka, na wydechu, bez wciągania brzucha.',
+        'Ważniejszy od pojedynczego pomiaru jest trend — mierz zawsze w tych samych warunkach, rano na czczo.',
+        'Masa beztłuszczowa (mięśnie, kości, woda) jest lepszym wskaźnikiem postępów niż sama waga.',
+      ],
+    };
+  },
+},
+{
+  id: 'waga-nalezna', cat: 'forma',
+  name: 'Waga należna i zakres docelowy',
+  desc: 'Cztery klasyczne wzory na masę należną plus zakres wynikający z BMI.',
+  tags: ['waga należna', 'idealna waga', 'masa docelowa', 'devine', 'broca',
+         'ile powinienem ważyć', 'zakres wagi'],
+  inputs: [
+    { k: 'wzrost', label: 'Wzrost', type: 'num', def: 178, suffix: 'cm' },
+    { k: 'plec', label: 'Płeć', type: 'select', def: 'm', options: [
+      { v: 'm', l: 'Mężczyzna' }, { v: 'k', l: 'Kobieta' },
+    ] },
+    { k: 'budowa', label: 'Budowa ciała', type: 'select', def: 'srednia', options: [
+      { v: 'drobna', l: 'Drobna — o 10% mniej' },
+      { v: 'srednia', l: 'Średnia' },
+      { v: 'masywna', l: 'Masywna — o 10% więcej' },
+    ] },
+    { k: 'obecna', label: 'Obecna masa ciała', type: 'num', def: 84, suffix: 'kg' },
+  ],
+  compute: function (v) {
+    var cm = n(v.wzrost, 0);
+    if (cm < 120 || cm > 230) return { blad: 'Podaj wzrost w centymetrach, między 120 a 230.' };
+
+    var caleP5 = Math.max(0, cm / 2.54 - 60);   // cale ponad 5 stóp
+    var m = v.plec === 'm';
+
+    var wzory = [
+      ['Devine (1974)', (m ? 50.0 : 45.5) + 2.3 * caleP5],
+      ['Robinson (1983)', (m ? 52.0 : 49.0) + (m ? 1.9 : 1.7) * caleP5],
+      ['Miller (1983)', (m ? 56.2 : 53.1) + (m ? 1.41 : 1.36) * caleP5],
+      ['Hamwi (1964)', (m ? 48.0 : 45.5) + (m ? 2.7 : 2.2) * caleP5],
+    ];
+    var korekta = v.budowa === 'drobna' ? 0.9 : (v.budowa === 'masywna' ? 1.1 : 1);
+    wzory = wzory.map(function (w) { return [w[0], w[1] * korekta]; });
+
+    var srednia = wzory.reduce(function (s, w) { return s + w[1]; }, 0) / wzory.length;
+    var metry = cm / 100;
+    var dolna = 18.5 * metry * metry, gorna = 24.9 * metry * metry;
+
+    var obecna = n(v.obecna, 0);
+    var bmi = obecna ? obecna / (metry * metry) : 0;
+    var roznica = obecna ? obecna - srednia : 0;
+
+    return {
+      main: [
+        { label: 'Waga należna', value: srednia, f: 'num', dec: 1, hint: 'kg' },
+        { label: 'Zakres prawidłowy', text: K.fmt.num(dolna, 0) + '–' + K.fmt.num(gorna, 0) + ' kg' },
+        obecna ? { label: roznica > 0 ? 'Ponad należną' : 'Poniżej należnej',
+          value: Math.abs(roznica), f: 'num', dec: 1, hint: 'kg' }
+          : { label: 'BMI docelowe', text: '18,5–24,9' },
+      ],
+      rows: [
+        { label: 'Wzrost', value: cm, f: 'num', dec: 0, sub: 'cm' },
+        { label: 'Budowa', text: v.budowa === 'drobna' ? 'drobna' : (v.budowa === 'masywna' ? 'masywna' : 'średnia') },
+        { separator: true },
+        { label: 'Średnia z czterech wzorów', value: srednia, f: 'num', dec: 1, sub: 'kg', strong: true },
+        { label: 'Zakres z BMI 18,5–24,9',
+          text: K.fmt.num(dolna, 1) + ' – ' + K.fmt.num(gorna, 1) + ' kg', strong: true },
+        obecna ? { separator: true } : null,
+        obecna ? { label: 'Obecna masa', value: obecna, f: 'num', dec: 1, sub: 'kg' } : null,
+        obecna ? { label: 'Obecne BMI', value: bmi, f: 'num', dec: 1 } : null,
+        obecna ? { label: 'Do wagi należnej', value: roznica, f: 'num', dec: 1, sub: 'kg', strong: true } : null,
+        obecna && obecna > gorna ? { label: 'Do górnej granicy zakresu', value: obecna - gorna, f: 'num', dec: 1, sub: 'kg' } : null,
+      ],
+      table: {
+        cols: [{ label: 'Wzór', num: false }, 'Masa należna'],
+        rows: wzory.map(function (w) {
+          return [w[0], { value: w[1], f: 'num', dec: 1 }];
+        }),
+        note: 'Wszystkie wzory powstały do dawkowania leków, nie do oceny sylwetki — stąd rozrzut.',
+      },
+      notes: [
+        'Wzory na masę należną opracowano w latach 60. i 80. XX wieku do przeliczania dawek leków. ' +
+        'Nie uwzględniają udziału mięśni, więc u osób trenujących siłowo zaniżają wynik.',
+        'Zakres wynikający z BMI jest szerszy i bardziej użyteczny niż pojedyncza liczba — ' +
+        'przy wzroście ' + K.fmt.num(cm, 0) + ' cm obejmuje ' + K.fmt.num(gorna - dolna, 0) + ' kg.',
+        'Korekta na budowę ciała to uproszczenie. Dokładniej ocenia ją obwód nadgarstka albo ' +
+        'szerokość łokcia — patrz kalkulator obwodów ciała.',
+      ],
+    };
+  },
+},
+
+{
+  id: 'maksymalny-ciezar', cat: 'forma',
+  name: 'Ciężar maksymalny (1RM) i strefy treningowe',
+  desc: 'Szacuje maksymalny ciężar na jedno powtórzenie i rozpisuje procenty do treningu.',
+  tags: ['1rm', 'ciężar maksymalny', 'siła', 'przysiad', 'wyciskanie', 'martwy ciąg',
+         'powtórzenia', 'trening siłowy', 'epley', 'brzycki'],
+  inputs: [
+    { k: 'ciezar', label: 'Podniesiony ciężar', type: 'num', def: 90, suffix: 'kg' },
+    { k: 'powtorzenia', label: 'Liczba powtórzeń', type: 'int', def: 5,
+      hint: 'Wzory są wiarygodne do około 10 powtórzeń. Powyżej rozjeżdżają się coraz bardziej.' },
+    { k: 'cel', label: 'Cel treningowy', type: 'select', def: 'sila', options: [
+      { v: 'sila', l: 'Siła maksymalna — 85–95%' },
+      { v: 'masa', l: 'Hipertrofia — 67–85%' },
+      { v: 'wytrzymalosc', l: 'Wytrzymałość siłowa — 50–67%' },
+    ] },
+  ],
+  compute: function (v) {
+    var w = n(v.ciezar, 0);
+    var r = Math.max(1, Math.round(n(v.powtorzenia, 1)));
+    if (!w) return { blad: 'Podaj podniesiony ciężar.' };
+
+    var wzory = [
+      ['Epley', w * (1 + r / 30)],
+      ['Brzycki', r < 37 ? w * 36 / (37 - r) : 0],
+      ['Lombardi', w * Math.pow(r, 0.10)],
+      ["O'Conner", w * (1 + 0.025 * r)],
+    ].filter(function (x) { return x[1] > 0; });
+
+    var max = wzory.reduce(function (s, x) { return s + x[1]; }, 0) / wzory.length;
+
+    var PROCENTY = [[100, 1], [95, 2], [90, 4], [85, 6], [80, 8], [75, 10], [70, 12], [65, 15], [60, 20]];
+    var STREFY = { sila: [85, 95], masa: [67, 85], wytrzymalosc: [50, 67] };
+    var strefa = STREFY[v.cel] || STREFY.sila;
+
+    return {
+      main: [
+        { label: 'Szacowany 1RM', value: max, f: 'num', dec: 1, hint: 'kg' },
+        { label: 'Strefa treningowa', text: strefa[0] + '–' + strefa[1] + '%' },
+        { label: 'Ciężar roboczy', text: K.fmt.num(max * strefa[0] / 100, 1) + '–' +
+          K.fmt.num(max * strefa[1] / 100, 1) + ' kg' },
+      ],
+      rows: [
+        { label: 'Podniesiony ciężar', value: w, f: 'num', dec: 1, sub: 'kg' },
+        { label: 'Powtórzenia', value: r, f: 'int' },
+        { separator: true },
+        { label: 'Szacowany 1RM', value: max, f: 'num', dec: 1, sub: 'kg', strong: true },
+        { label: 'Rozrzut między wzorami',
+          value: Math.max.apply(null, wzory.map(function (x) { return x[1]; })) -
+                 Math.min.apply(null, wzory.map(function (x) { return x[1]; })),
+          f: 'num', dec: 1, sub: 'kg' },
+        { separator: true },
+        { label: 'Dolna granica strefy', value: max * strefa[0] / 100, f: 'num', dec: 1, sub: 'kg' },
+        { label: 'Górna granica strefy', value: max * strefa[1] / 100, f: 'num', dec: 1, sub: 'kg', strong: true },
+      ],
+      tables: [
+        {
+          title: 'Szacunki według wzorów',
+          cols: [{ label: 'Wzór', num: false }, '1RM'],
+          rows: wzory.map(function (x) { return [x[0], { value: x[1], f: 'num', dec: 1 }]; }),
+        },
+        {
+          title: 'Procenty ciężaru maksymalnego',
+          cols: ['% 1RM', 'Ciężar', 'Powtórzeń orientacyjnie'],
+          rows: PROCENTY.map(function (p) {
+            return { mocny: p[0] >= strefa[0] && p[0] <= strefa[1],
+              cells: [{ value: p[0], f: 'int' }, { value: max * p[0] / 100, f: 'num', dec: 1 },
+                      { value: p[1], f: 'int' }] };
+          }),
+          note: 'Podświetlone wiersze odpowiadają wybranemu celowi treningowemu.',
+        },
+      ],
+      warn: r > 10
+        ? ['Powyżej dziesięciu powtórzeń wzory tracą dokładność — przy ' + r +
+           ' powtórzeniach wynik traktuj jako bardzo zgrubny.']
+        : [],
+      notes: [
+        'Wszystkie wzory to regresje z badań na grupach, nie prawa fizyki. Rozrzut między nimi ' +
+        'pokazuje, jak niepewny jest taki szacunek.',
+        'Dokładność zależy od ćwiczenia: dla przysiadu i martwego ciągu wzory sprawdzają się lepiej ' +
+        'niż dla wyciskania, gdzie wytrzymałość szybciej ogranicza liczbę powtórzeń.',
+        'Testowanie prawdziwego 1RM wymaga rozgrzewki, asekuracji i doświadczenia. Dla większości ' +
+        'trenujących szacunek z serii na 3–5 powtórzeń jest bezpieczniejszy i wystarczający.',
+      ],
+    };
+  },
+},
+
+]);
+})();
+
+/* ===== src/calculators/92-zdrowie.js ===== */
+/* Zdrowie i ciało. */
+(function () {
+var n = K.n, pr = K.pr, P = K.P;
+
+K.register([
+
+{
+  id: 'nawodnienie', cat: 'zdrowie',
+  name: 'Ile wody dziennie',
+  desc: 'Zapotrzebowanie na płyny według masy ciała, aktywności i temperatury.',
+  tags: ['woda', 'nawodnienie', 'picie', 'zdrowie', 'płyny'],
+  inputs: [
+    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
+    { k: 'aktywnosc', label: 'Minut aktywności fizycznej dziennie', type: 'num', def: 45, suffix: 'min' },
+    { k: 'temperatura', label: 'Temperatura otoczenia', type: 'select', def: 'normalna', options: [
+      { v: 'chlodno', l: 'Poniżej 15°C' }, { v: 'normalna', l: '15–25°C' },
+      { v: 'cieplo', l: '25–30°C' }, { v: 'upal', l: 'Powyżej 30°C' },
+    ] },
+    { k: 'kawa', label: 'Filiżanek kawy dziennie', type: 'int', def: 3 },
+    { k: 'alkohol', label: 'Jednostek alkoholu dziennie', type: 'num', def: 0 },
+    { k: 'ciaza', label: 'Ciąża lub karmienie', type: 'select', def: 'nie', options: [
+      { v: 'nie', l: 'Nie dotyczy' }, { v: 'ciaza', l: 'Ciąża — +300 ml' },
+      { v: 'karmienie', l: 'Karmienie piersią — +700 ml' },
+    ] },
+  ],
+  compute: function (v) {
+    var bazowa = n(v.waga, 78) * 30;   // ml na kg masy ciała
+    var zaAktywnosc = n(v.aktywnosc, 45) / 30 * 350;
+    var mnoznikTemp = { chlodno: 0, normalna: 0, cieplo: 400, upal: 800 }[v.temperatura] || 0;
+    var zaKawe = n(v.kawa, 3) * 50;
+    var zaAlkohol = n(v.alkohol) * 250;
+    var zaCiaze = { nie: 0, ciaza: 300, karmienie: 700 }[v.ciaza] || 0;
+
+    var razem = bazowa + zaAktywnosc + mnoznikTemp + zaKawe + zaAlkohol + zaCiaze;
+    // Około 20% płynów pochodzi z pożywienia.
+    var zNapojow = razem * 0.8;
+    var szklanek = zNapojow / 250;
+
+    return {
+      main: [
+        { label: 'Zapotrzebowanie na płyny', value: razem / 1000, f: 'num', dec: 2, hint: 'litrów' },
+        { label: 'Z napojów', value: zNapojow / 1000, f: 'num', dec: 2, hint: 'litrów' },
+        { label: 'Szklanek 250 ml', value: szklanek, f: 'num', dec: 0 },
+      ],
+      rows: [
+        { label: 'Zapotrzebowanie podstawowe', sub: '30 ml na kilogram masy ciała',
+          value: bazowa, f: 'num', dec: 0, sub2: 'ml' },
+        zaAktywnosc ? { label: 'Za aktywność fizyczną', value: zaAktywnosc, f: 'num', dec: 0, sub: 'ml' } : null,
+        mnoznikTemp ? { label: 'Za wysoką temperaturę', value: mnoznikTemp, f: 'num', dec: 0, sub: 'ml' } : null,
+        zaKawe ? { label: 'Kompensacja kawy', value: zaKawe, f: 'num', dec: 0, sub: 'ml' } : null,
+        zaAlkohol ? { label: 'Kompensacja alkoholu', value: zaAlkohol, f: 'num', dec: 0, sub: 'ml' } : null,
+        zaCiaze ? { label: 'Ciąża lub karmienie', value: zaCiaze, f: 'num', dec: 0, sub: 'ml' } : null,
+        { label: 'Razem', value: razem, f: 'num', dec: 0, sub: 'ml', strong: true },
+        { separator: true },
+        { label: 'Z pożywienia (około 20%)', value: razem * 0.2, f: 'num', dec: 0, sub: 'ml' },
+        { label: 'Do wypicia', value: zNapojow, f: 'num', dec: 0, sub: 'ml', strong: true },
+        { label: 'Butelek 0,5 l', value: zNapojow / 500, f: 'num', dec: 1 },
+        { label: 'Szklanek 250 ml', value: szklanek, f: 'num', dec: 1 },
+        { separator: true },
+        { label: 'Co ile pić szklankę', text: K.fmt.num(K.dziel(16 * 60, szklanek), 0) + ' minut',
+          sub: 'przez 16 godzin czuwania' },
+      ].filter(Boolean),
+      notes: [
+        'Najlepszym wskaźnikiem nawodnienia jest kolor moczu — powinien być jasnożółty.',
+        'Kawa nie odwadnia tak, jak się powszechnie sądzi — przy regularnym piciu efekt moczopędny jest niewielki.',
+        'Pragnienie pojawia się dopiero przy odwodnieniu rzędu 1–2% masy ciała — nie czekaj na nie.',
+        'Przy intensywnym wysiłku powyżej godziny warto uzupełniać także elektrolity, nie tylko wodę.',
       ],
     };
   },
@@ -19906,92 +20687,6 @@ K.register([
 },
 
 {
-  id: 'tempo-biegu', cat: 'zdrowie',
-  name: 'Tempo biegu i czas na dystansie',
-  desc: 'Przeliczenie tempa, prędkości i prognozowanego czasu na innych dystansach.',
-  tags: ['bieganie', 'tempo', 'maraton', 'dystans', 'czas', 'prędkość'],
-  inputs: [
-    { k: 'tryb', label: 'Co znasz', type: 'select', def: 'czas', options: [
-      { v: 'czas', l: 'Czas i dystans — policz tempo' },
-      { v: 'tempo', l: 'Tempo i dystans — policz czas' },
-    ] },
-    { k: 'dystans', label: 'Dystans', type: 'num', def: 10, suffix: 'km', step: 0.1 },
-    { k: 'godziny', label: 'Godziny', type: 'int', def: 0,
-      pokaz: function (v) { return v.tryb === 'czas'; } },
-    { k: 'minuty', label: 'Minuty', type: 'int', def: 52,
-      pokaz: function (v) { return v.tryb === 'czas'; } },
-    { k: 'sekundy', label: 'Sekundy', type: 'int', def: 30,
-      pokaz: function (v) { return v.tryb === 'czas'; } },
-    { k: 'tempoMin', label: 'Tempo — minuty na km', type: 'int', def: 5,
-      pokaz: function (v) { return v.tryb === 'tempo'; } },
-    { k: 'tempoSek', label: 'Tempo — sekundy', type: 'int', def: 15,
-      pokaz: function (v) { return v.tryb === 'tempo'; } },
-  ],
-  compute: function (v) {
-    var dystans = Math.max(0.001, n(v.dystans, 10));
-    var sekundy;
-    if (v.tryb === 'czas') {
-      sekundy = n(v.godziny) * 3600 + n(v.minuty, 52) * 60 + n(v.sekundy, 30);
-    } else {
-      sekundy = (n(v.tempoMin, 5) * 60 + n(v.tempoSek, 15)) * dystans;
-    }
-    var tempoSek = K.dziel(sekundy, dystans);
-    var predkosc = K.dziel(dystans, sekundy / 3600);
-
-    function czas(s) {
-      s = Math.round(s);
-      var g = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sek = s % 60;
-      return (g ? g + ':' + String(m).padStart(2, '0') : m) + ':' + String(sek).padStart(2, '0');
-    }
-    function tempo(s) {
-      s = Math.round(s);
-      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-    }
-
-    // Prognoza na innych dystansach — wzór Riegela (wykładnik 1,06).
-    var dystanse = [
-      { l: '1 km', d: 1 }, { l: '5 km', d: 5 }, { l: '10 km', d: 10 },
-      { l: 'Półmaraton', d: 21.0975 }, { l: 'Maraton', d: 42.195 },
-    ];
-
-    return {
-      main: [
-        { label: 'Tempo', text: tempo(tempoSek) + ' min/km' },
-        { label: 'Prędkość', value: predkosc, f: 'num', dec: 2, hint: 'km/h' },
-        { label: 'Czas', text: czas(sekundy) },
-      ],
-      table: {
-        cols: [{ label: 'Dystans', num: false }, { label: 'Prognozowany czas', num: false },
-          { label: 'Tempo', num: false }, 'Prędkość'],
-        rows: dystanse.map(function (d) {
-          var t = sekundy * Math.pow(d.d / dystans, 1.06);
-          return { mocny: Math.abs(d.d - dystans) < 0.5, cells: [d.l, czas(t),
-            tempo(t / d.d) + ' min/km', { value: K.dziel(d.d, t / 3600), f: 'num', dec: 2 }] };
-        }),
-        note: 'Prognoza wzorem Riegela — zakłada podobne przygotowanie na wszystkich dystansach.',
-      },
-      rows: [
-        { label: 'Dystans', value: dystans, f: 'num', dec: 3, sub: 'km' },
-        { label: 'Czas', text: czas(sekundy), strong: true },
-        { label: 'Tempo', text: tempo(tempoSek) + ' min/km', strong: true },
-        { label: 'Prędkość', value: predkosc, f: 'num', dec: 2, sub: 'km/h' },
-        { label: 'Tempo w milach', text: tempo(tempoSek * 1.60934) + ' min/milę' },
-        { separator: true },
-        { label: 'Czas na 100 m', text: tempo(tempoSek / 10) },
-        { label: 'Kroków (przy 165 kroków/min)', value: sekundy / 60 * 165, f: 'num', dec: 0 },
-        { label: 'Szacowany wydatek energetyczny',
-          value: dystans * 65, f: 'num', dec: 0, sub: 'kcal przy 78 kg' },
-      ],
-      notes: [
-        'Wzór Riegela: czas₂ = czas₁ × (dystans₂ ÷ dystans₁)^1,06. Sprawdza się przy dystansach różniących się nie więcej niż czterokrotnie.',
-        'Prognoza maratonu z czasu na 10 km bywa zbyt optymistyczna — maraton wymaga osobnego przygotowania wytrzymałościowego.',
-        'Wydatek energetyczny biegu to około 1 kcal na kilogram masy ciała na kilometr, niezależnie od tempa.',
-      ],
-    };
-  },
-},
-
-{
   id: 'cykle-snu', cat: 'zdrowie',
   name: 'Kiedy się położyć albo wstać',
   desc: 'Optymalne godziny snu w cyklach 90-minutowych.',
@@ -20055,164 +20750,6 @@ K.register([
         'Budzenie się na końcu cyklu (w fazie snu płytkiego) jest znacznie łatwiejsze niż w środku snu głębokiego.',
         'Pięć pełnych cykli (7,5 godziny) to dla większości dorosłych optymalna długość snu.',
         'Regularne godziny snu są ważniejsze niż idealne trafienie w cykl — organizm sam się dostosowuje.',
-      ],
-    };
-  },
-},
-
-{
-  id: 'spalone-kalorie', cat: 'zdrowie',
-  name: 'Kalorie spalone podczas aktywności',
-  desc: 'Wydatek energetyczny różnych aktywności według wskaźnika MET.',
-  tags: ['kalorie', 'spalanie', 'aktywność', 'trening', 'met', 'sport'],
-  inputs: [
-    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
-    { k: 'aktywnosc', label: 'Aktywność', type: 'select', def: 8, options: [
-      { v: 2.5, l: 'Spacer wolny (3 km/h)' },
-      { v: 3.5, l: 'Marsz (5 km/h)' },
-      { v: 5, l: 'Marsz szybki (6,5 km/h)' },
-      { v: 8, l: 'Bieg (8 km/h)' },
-      { v: 11.5, l: 'Bieg szybki (11 km/h)' },
-      { v: 6, l: 'Rower rekreacyjnie (16 km/h)' },
-      { v: 10, l: 'Rower szybko (25 km/h)' },
-      { v: 7, l: 'Pływanie umiarkowanie' },
-      { v: 6, l: 'Trening siłowy' },
-      { v: 7.3, l: 'Zajęcia fitness' },
-      { v: 3.5, l: 'Prace domowe' },
-      { v: 4.5, l: 'Praca w ogrodzie' },
-      { v: 5.5, l: 'Taniec' },
-      { v: 8, l: 'Wspinaczka i turystyka górska' },
-    ] },
-    { k: 'czas', label: 'Czas trwania', type: 'num', def: 45, suffix: 'min' },
-    { k: 'razyTydzien', label: 'Razy w tygodniu', type: 'num', def: 3 },
-  ],
-  compute: function (v) {
-    var met = n(v.aktywnosc, 8), waga = n(v.waga, 78), minuty = n(v.czas, 45);
-    // Kalorie = MET × masa ciała (kg) × czas (h)
-    var kalorie = met * waga * (minuty / 60);
-    var naTydzien = kalorie * n(v.razyTydzien, 3);
-    var naMiesiac = naTydzien * 4.35;
-    var kgTluszczuRocznie = naTydzien * 52 / 7700;
-
-    var por = [
-      { l: 'Spacer', met: 3.5 }, { l: 'Bieg 8 km/h', met: 8 }, { l: 'Rower 16 km/h', met: 6 },
-      { l: 'Pływanie', met: 7 }, { l: 'Siłownia', met: 6 },
-    ];
-
-    return {
-      main: [
-        { label: 'Spalone kalorie', value: kalorie, f: 'num', dec: 0, hint: 'kcal' },
-        { label: 'Tygodniowo', value: naTydzien, f: 'num', dec: 0, hint: 'kcal' },
-        { label: 'Rocznie odpowiada', value: kgTluszczuRocznie, f: 'num', dec: 1, hint: 'kg tłuszczu' },
-      ],
-      rows: [
-        { label: 'Wskaźnik MET', value: met, f: 'num', dec: 1 },
-        { label: 'Masa ciała', value: waga, f: 'num', dec: 1, sub: 'kg' },
-        { label: 'Czas', value: minuty, f: 'num', dec: 0, sub: 'minut' },
-        { label: 'Spalone kalorie', value: kalorie, f: 'num', dec: 0, sub: 'kcal', strong: true },
-        { label: 'Na minutę', value: K.dziel(kalorie, minuty), f: 'num', dec: 1, sub: 'kcal' },
-        { separator: true },
-        { label: 'Tygodniowo', value: naTydzien, f: 'num', dec: 0, sub: 'kcal' },
-        { label: 'Miesięcznie', value: naMiesiac, f: 'num', dec: 0, sub: 'kcal' },
-        { label: 'Rocznie', value: naTydzien * 52, f: 'num', dec: 0, sub: 'kcal' },
-        { separator: true },
-        { label: 'Odpowiada tygodniowo', text: K.fmt.num(naTydzien / 7700 * 1000, 0) + ' g tkanki tłuszczowej' },
-        { label: 'Ekwiwalent w jedzeniu', text: K.fmt.num(kalorie / 250, 1) + ' pączka albo ' +
-          K.fmt.num(kalorie / 500, 1) + ' pizzy' },
-      ],
-      table: {
-        cols: [{ label: 'Aktywność', num: false }, 'MET', 'Kalorie w ' + K.fmt.num(minuty, 0) + ' min',
-          'Czas na 500 kcal'],
-        rows: por.map(function (p) {
-          var k = p.met * waga * (minuty / 60);
-          return { mocny: Math.abs(p.met - met) < 0.3, cells: [p.l, K.fmt.num(p.met, 1),
-            { value: k, f: 'num', dec: 0 },
-            { text: K.fmt.num(K.dziel(500 * 60, p.met * waga), 0) + ' min' }] };
-        }),
-      },
-      notes: [
-        'MET to wielokrotność spoczynkowego wydatku energetycznego. Aktywność o MET 8 spala osiem razy więcej niż siedzenie.',
-        'Wyliczenie obejmuje całkowity wydatek, w tym metabolizm podstawowy — netto (ponad spoczynek) jest o mniej więcej 10% niższy.',
-        'Wyniki z zegarków sportowych bywają zawyżone nawet o 20–30%, zwłaszcza przy treningu siłowym.',
-        'Aktywność fizyczna to nie tylko kalorie — poprawia wrażliwość na insulinę, nastrój i jakość snu.',
-      ],
-    };
-  },
-},
-
-{
-  id: 'obwody-ciala', cat: 'zdrowie',
-  name: 'Obwody ciała i procent tkanki tłuszczowej',
-  desc: 'Metoda US Navy — szacunek zawartości tłuszczu z obwodów.',
-  tags: ['tkanka tłuszczowa', 'obwody', 'talia', 'body fat', 'sylwetka', 'whr'],
-  inputs: [
-    { k: 'plec', label: 'Płeć', type: 'select', def: 'm', options: [
-      { v: 'm', l: 'Mężczyzna' }, { v: 'k', l: 'Kobieta' },
-    ] },
-    { k: 'wzrost', label: 'Wzrost', type: 'num', def: 178, suffix: 'cm' },
-    { k: 'waga', label: 'Masa ciała', type: 'num', def: 78, suffix: 'kg', step: 0.1 },
-    { k: 'szyja', label: 'Obwód szyi', type: 'num', def: 38, suffix: 'cm', step: 0.5 },
-    { k: 'talia', label: 'Obwód talii', type: 'num', def: 88, suffix: 'cm', step: 0.5 },
-    { k: 'biodra', label: 'Obwód bioder', type: 'num', def: 98, suffix: 'cm', step: 0.5,
-      hint: 'Potrzebny tylko dla kobiet.' },
-  ],
-  compute: function (v) {
-    var wzrost = n(v.wzrost, 178), talia = n(v.talia, 88), szyja = n(v.szyja, 38);
-    var biodra = n(v.biodra, 98), waga = n(v.waga, 78);
-    var bf;
-    if (v.plec === 'm') {
-      var x = talia - szyja;
-      bf = x > 0 && wzrost > 0
-        ? 495 / (1.0324 - 0.19077 * Math.log10(x) + 0.15456 * Math.log10(wzrost)) - 450 : 0;
-    } else {
-      var y = talia + biodra - szyja;
-      bf = y > 0 && wzrost > 0
-        ? 495 / (1.29579 - 0.35004 * Math.log10(y) + 0.22100 * Math.log10(wzrost)) - 450 : 0;
-    }
-    bf = K.clamp(bf, 0, 70);
-
-    var masaTluszczu = waga * bf / 100;
-    var masaBeztluszczowa = waga - masaTluszczu;
-    var whr = K.dziel(talia, biodra);
-
-    var kategorie = v.plec === 'm'
-      ? [['Niezbędny', 2, 5], ['Sportowy', 6, 13], ['Fitness', 14, 17], ['Przeciętny', 18, 24], ['Otyłość', 25, 100]]
-      : [['Niezbędny', 10, 13], ['Sportowy', 14, 20], ['Fitness', 21, 24], ['Przeciętny', 25, 31], ['Otyłość', 32, 100]];
-    var kat = kategorie.filter(function (k) { return bf >= k[1] && bf <= k[2]; })[0];
-
-    return {
-      main: [
-        { label: 'Tkanka tłuszczowa', value: bf / 100, f: 'pct' },
-        { label: 'Masa tłuszczu', value: masaTluszczu, f: 'num', dec: 1, hint: 'kg' },
-        { label: 'Kategoria', text: kat ? kat[0] : '—' },
-      ],
-      rows: [
-        { label: 'Masa ciała', value: waga, f: 'num', dec: 1, sub: 'kg' },
-        { label: 'Tkanka tłuszczowa', value: bf / 100, f: 'pct', strong: true },
-        { label: 'Masa tłuszczu', value: masaTluszczu, f: 'num', dec: 2, sub: 'kg' },
-        { label: 'Masa beztłuszczowa', value: masaBeztluszczowa, f: 'num', dec: 2, sub: 'kg', strong: true },
-        { separator: true },
-        { label: 'Obwód talii', value: talia, f: 'num', dec: 1, sub: 'cm' },
-        { label: 'Obwód bioder', value: biodra, f: 'num', dec: 1, sub: 'cm' },
-        { label: 'Wskaźnik talia/biodra (WHR)', value: whr, f: 'num', dec: 3,
-          sub: (v.plec === 'm' ? (whr < 0.9 ? 'w normie' : 'podwyższone ryzyko')
-            : (whr < 0.8 ? 'w normie' : 'podwyższone ryzyko')) },
-        { label: 'Talia/wzrost', value: K.dziel(talia, wzrost), f: 'num', dec: 3,
-          sub: K.dziel(talia, wzrost) < 0.5 ? 'w normie' : 'powyżej zalecanego' },
-      ],
-      table: {
-        cols: [{ label: 'Kategoria', num: false }, { label: 'Zakres', num: false }, 'Masa tłuszczu przy Twojej wadze'],
-        rows: kategorie.map(function (k) {
-          return { mocny: kat && k[0] === kat[0], cells: [k[0],
-            k[1] + '–' + (k[2] === 100 ? 'więcej' : k[2]) + '%',
-            { text: K.fmt.num(waga * k[1] / 100, 1) + '–' + K.fmt.num(waga * Math.min(k[2], 45) / 100, 1) + ' kg' }] };
-        }),
-      },
-      notes: [
-        'Metoda US Navy ma dokładność około ±3–4 punktów procentowych — wystarczającą do śledzenia zmian w czasie.',
-        'Obwód talii mierz na wysokości pępka, na wydechu, bez wciągania brzucha.',
-        'Ważniejszy od pojedynczego pomiaru jest trend — mierz zawsze w tych samych warunkach, rano na czczo.',
-        'Masa beztłuszczowa (mięśnie, kości, woda) jest lepszym wskaźnikiem postępów niż sama waga.',
       ],
     };
   },
@@ -20299,7 +20836,6 @@ K.register([
     };
   },
 },
-
 ]);
 })();
 
